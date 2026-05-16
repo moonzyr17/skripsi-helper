@@ -1,19 +1,23 @@
 # Skripsi Helper 🎓
 
-AI-powered research assistant untuk membantu mahasiswa informatika menemukan judul skripsi yang tepat.
+AI-powered research assistant untuk membantu mahasiswa Indonesia dari semua jurusan menemukan judul skripsi yang tepat.
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue) ![Flask](https://img.shields.io/badge/Flask-3.1-green) ![Groq](https://img.shields.io/badge/AI-Groq%20Llama%203-orange) ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+## 🚀 Demo
+
+**Live:** [https://web-production-6d647.up.railway.app](https://web-production-6d647.up.railway.app)
+
 ## ✨ Fitur
 
-- **🎯 Generator Judul** — Generate 5 judul skripsi berdasarkan bidang & keyword via AI
+- **🎯 Generator Judul** — Generate 10 judul skripsi berdasarkan bidang & keyword via AI
 - **🔍 Cek Riset** — Cek penelitian serupa di Semantic Scholar
 - **🔬 Saran Metodologi** — Rekomendasi metode, tools, dataset, dan estimasi waktu
 - **📝 Outline BAB 1** — Generate latar belakang, rumusan masalah, tujuan, batasan otomatis
 
-## 🚀 Demo
+## 🎓 Cocok untuk Semua Jurusan
 
-Deploy di Railway — lihat link di bagian About repo.
+Informatika, Ekonomi, Manajemen, Hukum, Keperawatan, Teknik Sipil, Psikologi, Pendidikan, dan lainnya.
 
 ## 🛠️ Instalasi
 
@@ -42,7 +46,7 @@ Buka `http://localhost:5000`
 | Endpoint | Method | Deskripsi |
 |---|---|---|
 | `/` | GET | Halaman utama |
-| `/api/generate-titles` | POST | Generate judul skripsi |
+| `/api/generate-titles` | POST | Generate 10 judul skripsi |
 | `/api/check-research` | POST | Cek penelitian di Semantic Scholar |
 | `/api/suggest-methodology` | POST | Saran metodologi |
 | `/api/generate-outline` | POST | Generate outline BAB 1 |
