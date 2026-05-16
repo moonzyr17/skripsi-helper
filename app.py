@@ -22,6 +22,7 @@ GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
 SEMANTIC_SCHOLAR_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
+CROSSREF_URL = "https://api.crossref.org/works"
 
 
 def groq_chat(messages: list, max_tokens: int = 1024) -> str:
@@ -41,8 +42,42 @@ def groq_chat(messages: list, max_tokens: int = 1024) -> str:
     return res.json()["choices"][0]["message"]["content"].strip()
 
 
-def search_semantic_scholar(query: str, limit: int = 5) -> list:
-    """Search existing papers on Semantic Scholar."""
+def search_crossref(query: str, limit: int = 5) -> list:
+    """Fallback paper search via Crossref."""
+    params = {
+        "query.title": query,
+        "rows": limit,
+        "select": "title,author,published-print,published-online,URL,abstract",
+    }
+    try:
+        res = requests.get(CROSSREF_URL, params=params, timeout=10)
+        res.raise_for_status()
+        items = res.json().get("message", {}).get("items", [])
+        papers = []
+        for item in items:
+            title = (item.get("title") or ["-"])[0]
+            authors = []
+            for a in item.get("author", [])[:3]:
+                name = " ".join(filter(None, [a.get("given"), a.get("family")]))
+                if name:
+                    authors.append({"name": name})
+            date_parts = (item.get("published-print") or item.get("published-online") or {}).get("date-parts", [[]])
+            year = date_parts[0][0] if date_parts and date_parts[0] else None
+            papers.append({
+                "title": title,
+                "authors": authors,
+                "year": year,
+                "abstract": item.get("abstract", ""),
+                "url": item.get("URL", ""),
+                "source": "Crossref",
+            })
+        return papers
+    except Exception:
+        return []
+
+
+def search_semantic_scholar(query: str, limit: int = 5) -> dict:
+    """Search existing papers on Semantic Scholar, fallback to Crossref."""
     params = {
         "query": query,
         "limit": limit,
@@ -50,11 +85,26 @@ def search_semantic_scholar(query: str, limit: int = 5) -> list:
     }
     try:
         res = requests.get(SEMANTIC_SCHOLAR_URL, params=params, timeout=10)
+        if res.status_code == 429:
+            fallback = search_crossref(query, limit)
+            return {
+                "papers": fallback,
+                "source": "Crossref",
+                "warning": "Semantic Scholar sedang rate limit, hasil ditampilkan dari Crossref."
+            }
         res.raise_for_status()
         data = res.json()
-        return data.get("data", [])
-    except Exception:
-        return []
+        papers = data.get("data", [])
+        for p in papers:
+            p["source"] = "Semantic Scholar"
+        return {"papers": papers, "source": "Semantic Scholar", "warning": ""}
+    except Exception as e:
+        fallback = search_crossref(query, limit)
+        return {
+            "papers": fallback,
+            "source": "Crossref",
+            "warning": f"Semantic Scholar gagal diakses, hasil ditampilkan dari Crossref."
+        }
 
 
 @app.route("/")
@@ -233,11 +283,16 @@ Hanya output JSON, tidak ada teks lain."""
 
 @app.route("/api/check-research", methods=["POST"])
 def check_research():
-    """Check existing research on Semantic Scholar."""
+    """Check existing research on Semantic Scholar, with Crossref fallback."""
     body = request.get_json()
     judul = body.get("judul", "")
-    papers = search_semantic_scholar(judul, limit=5)
-    return jsonify({"success": True, "papers": papers})
+    result = search_semantic_scholar(judul, limit=5)
+    return jsonify({
+        "success": True,
+        "papers": result.get("papers", []),
+        "source": result.get("source", ""),
+        "warning": result.get("warning", "")
+    })
 
 
 @app.route("/api/suggest-methodology", methods=["POST"])
