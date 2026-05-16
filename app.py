@@ -65,8 +65,8 @@ def generate_titles():
     metode = body.get("metode", "")
     level = body.get("level", "S1")
 
-    prompt = f"""Kamu adalah asisten akademik untuk mahasiswa informatika Indonesia.
-Tugasmu adalah menghasilkan 5 judul skripsi yang kreatif, spesifik, dan layak untuk diteliti.
+    prompt = f"""Kamu adalah asisten akademik untuk mahasiswa Indonesia dari berbagai jurusan.
+Tugasmu adalah menghasilkan 10 judul skripsi yang kreatif, spesifik, dan layak untuk diteliti.
 
 Informasi dari mahasiswa:
 - Bidang/topik: {bidang}
@@ -77,16 +77,17 @@ Informasi dari mahasiswa:
 Aturan judul yang baik:
 1. Spesifik dan tidak terlalu umum
 2. Mengandung objek penelitian yang jelas
-3. Mengandung metode atau pendekatan
+3. Mengandung metode atau pendekatan yang sesuai bidang
 4. Bahasa Indonesia yang baku
 5. Panjang 10-20 kata
+6. Sesuaikan dengan bidang ilmu yang diberikan (bisa sains, sosial, hukum, ekonomi, kesehatan, teknik, dll)
 
 Format output (JSON array):
 [
   {{
     "judul": "judul skripsi lengkap",
     "metode": "metode utama yang digunakan",
-    "bidang": "sub-bidang informatika",
+    "bidang": "sub-bidang ilmu",
     "tingkat_kesulitan": "Mudah/Sedang/Sulit",
     "alasan": "kenapa judul ini menarik dan layak diteliti (1-2 kalimat)"
   }}
@@ -122,7 +123,7 @@ def suggest_methodology():
     body = request.get_json()
     judul = body.get("judul", "")
 
-    prompt = f"""Kamu adalah dosen pembimbing skripsi informatika di Indonesia.
+    prompt = f"""Kamu adalah dosen pembimbing skripsi di Indonesia untuk berbagai jurusan.
 Berikan saran metodologi penelitian yang detail untuk judul skripsi berikut:
 
 Judul: "{judul}"
@@ -157,7 +158,7 @@ def generate_outline():
     body = request.get_json()
     judul = body.get("judul", "")
 
-    prompt = f"""Kamu adalah dosen pembimbing skripsi informatika di Indonesia.
+    prompt = f"""Kamu adalah dosen pembimbing skripsi di Indonesia untuk berbagai jurusan.
 Buatkan outline BAB 1 (Pendahuluan) yang lengkap untuk skripsi dengan judul:
 
 "{judul}"
