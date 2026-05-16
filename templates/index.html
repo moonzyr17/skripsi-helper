@@ -86,6 +86,11 @@
 const panels=['titles','research','methodology','outline'];
 let currentOutline=null;
 let currentOutlineTitle='';
+window.addEventListener('pageshow',()=>{
+  // iOS/Safari can restore the previous workflow screen from back-forward cache.
+  // Always reopen this tool in a clean state so old research/methodology results disappear.
+  setTimeout(()=>{ try { clearAll(); window.scrollTo(0,0); } catch(e){} }, 0);
+});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&['bidang','keywords','metode'].includes(document.activeElement.id))generateTitles()});
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
 function setLoad(spin,text,on){document.getElementById(spin).classList.toggle('hidden',!on);document.getElementById(text).classList.toggle('hidden',on)}

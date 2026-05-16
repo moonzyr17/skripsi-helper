@@ -107,9 +107,20 @@ def search_semantic_scholar(query: str, limit: int = 5) -> dict:
         }
 
 
+@app.after_request
+def add_no_cache_headers(response):
+    """Prevent mobile browsers from restoring stale workflow state."""
+    if response.content_type and "text/html" in response.content_type:
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 
 def _set_doc_style(document: Document):
