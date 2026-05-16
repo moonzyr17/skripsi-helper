@@ -54,7 +54,7 @@ Buka `http://localhost:5000`
 ## 🤖 Tech Stack
 
 - **Backend**: Flask (Python)
-- **AI**: Groq API — Llama 3.3 70B
+- **AI**: Groq API — Llama Model 3.3 70B
 - **Research**: Semantic Scholar API
 - **Frontend**: HTML + Tailwind CSS
 - **Deploy**: Railway
