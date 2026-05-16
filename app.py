@@ -6,8 +6,14 @@ untuk mahasiswa informatika menggunakan Groq API.
 
 import os
 import json
+import re
+from io import BytesIO
 import requests
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
+from docx import Document
+from docx.shared import Inches, Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.section import WD_SECTION
 
 app = Flask(__name__)
 
@@ -54,6 +60,123 @@ def search_semantic_scholar(query: str, limit: int = 5) -> list:
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+def _set_doc_style(document: Document):
+    """Apply clean academic formatting to DOCX."""
+    section = document.sections[0]
+    section.top_margin = Inches(1)
+    section.bottom_margin = Inches(1)
+    section.left_margin = Inches(1.2)
+    section.right_margin = Inches(1)
+
+    styles = document.styles
+    normal = styles["Normal"]
+    normal.font.name = "Times New Roman"
+    normal.font.size = Pt(12)
+    normal.paragraph_format.line_spacing = 1.5
+    normal.paragraph_format.space_after = Pt(6)
+
+    for style_name in ["Heading 1", "Heading 2"]:
+        style = styles[style_name]
+        style.font.name = "Times New Roman"
+        style.font.bold = True
+        style.font.size = Pt(14 if style_name == "Heading 1" else 12)
+        style.paragraph_format.space_before = Pt(12)
+        style.paragraph_format.space_after = Pt(6)
+
+
+def _add_heading(document: Document, text: str, level: int = 1):
+    p = document.add_paragraph()
+    p.style = f"Heading {level}"
+    run = p.add_run(text)
+    run.bold = True
+    if level == 1:
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    return p
+
+
+def _add_body_paragraph(document: Document, text: str):
+    p = document.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.first_line_indent = Inches(0.3)
+    p.paragraph_format.line_spacing = 1.5
+    p.add_run(text or "-")
+    return p
+
+
+def _add_numbered_list(document: Document, items: list):
+    for item in items or []:
+        p = document.add_paragraph(style="List Number")
+        p.paragraph_format.line_spacing = 1.5
+        p.paragraph_format.left_indent = Inches(0.25)
+        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        p.add_run(str(item))
+
+
+def _safe_filename(title: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9_-]+", "-", title.lower()).strip("-")[:60]
+    return f"bab-1-{slug or 'outline'}.docx"
+
+
+@app.route("/api/download-outline", methods=["POST"])
+def download_outline():
+    body = request.get_json() or {}
+    judul = body.get("judul", "Judul Skripsi")
+    outline = body.get("outline", {})
+
+    document = Document()
+    _set_doc_style(document)
+
+    # Mini cover / title block
+    p = document.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run("OUTLINE BAB I\nPENDAHULUAN")
+    run.bold = True
+    run.font.name = "Times New Roman"
+    run.font.size = Pt(14)
+
+    p = document.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_after = Pt(18)
+    run = p.add_run(judul.upper())
+    run.bold = True
+    run.font.name = "Times New Roman"
+    run.font.size = Pt(12)
+
+    _add_heading(document, "BAB I", 1)
+    _add_heading(document, "PENDAHULUAN", 1)
+
+    _add_heading(document, "1.1 Latar Belakang", 2)
+    _add_body_paragraph(document, outline.get("latar_belakang", ""))
+
+    _add_heading(document, "1.2 Rumusan Masalah", 2)
+    _add_numbered_list(document, outline.get("rumusan_masalah", []))
+
+    _add_heading(document, "1.3 Tujuan Penelitian", 2)
+    _add_numbered_list(document, outline.get("tujuan_penelitian", []))
+
+    _add_heading(document, "1.4 Manfaat Penelitian", 2)
+    manfaat = outline.get("manfaat_penelitian", {}) or {}
+    _add_body_paragraph(document, f"Manfaat teoritis: {manfaat.get('teoritis', '-')}")
+    _add_body_paragraph(document, f"Manfaat praktis: {manfaat.get('praktis', '-')}")
+
+    _add_heading(document, "1.5 Batasan Masalah", 2)
+    _add_numbered_list(document, outline.get("batasan_masalah", []))
+
+    _add_heading(document, "1.6 Sistematika Penulisan", 2)
+    _add_numbered_list(document, outline.get("sistematika_penulisan", []))
+
+    buffer = BytesIO()
+    document.save(buffer)
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=_safe_filename(judul),
+        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
 
 
 @app.route("/api/generate-titles", methods=["POST"])
