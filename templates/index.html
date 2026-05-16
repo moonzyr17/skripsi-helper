@@ -58,7 +58,11 @@
         <div id="selectedBox" class="hidden mt-4 soft p-4">
           <div class="label mb-1">Judul terpilih</div>
           <div id="selectedTitle" class="font-bold text-zinc-900 text-sm leading-relaxed"></div>
-          <div class="flex gap-2 flex-wrap mt-3"><button class="btn btn-dark py-2" onclick="openByName('research')">Cek Riset</button><button class="btn btn-light py-2" onclick="openByName('methodology')">Saran Metodologi</button><button class="btn btn-light py-2" onclick="openByName('outline')">Outline BAB 1</button></div>
+          <div class="flex gap-2 flex-wrap mt-3">
+            <button data-mini-tab="research" class="btn btn-light py-2" onclick="openByName('research')">Cek Riset</button>
+            <button data-mini-tab="methodology" class="btn btn-light py-2" onclick="openByName('methodology')">Saran Metodologi</button>
+            <button data-mini-tab="outline" class="btn btn-light py-2" onclick="openByName('outline')">Outline BAB 1</button>
+          </div>
         </div>
       </div>
 
@@ -86,7 +90,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&['bidang','keywords'
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
 function setLoad(spin,text,on){document.getElementById(spin).classList.toggle('hidden',!on);document.getElementById(text).classList.toggle('hidden',on)}
 function clearAll(){['bidang','keywords','metode','researchQuery','methQuery','outlineQuery'].forEach(id=>{let e=document.getElementById(id);if(e)e.value=''});document.getElementById('workspace').classList.add('hidden');document.getElementById('selectedBox').classList.add('hidden')}
-function openPanel(name,btn){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));if(btn)btn.classList.add('active');document.querySelectorAll('.hidden-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active')}
+function syncMiniTabs(name){document.querySelectorAll('[data-mini-tab]').forEach(b=>{b.classList.remove('btn-dark');b.classList.add('btn-light')});let active=document.querySelector(`[data-mini-tab="${name}"]`);if(active){active.classList.remove('btn-light');active.classList.add('btn-dark')}}
+function openPanel(name,btn){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));if(btn)btn.classList.add('active');document.querySelectorAll('.hidden-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');syncMiniTabs(name)}
 function openByName(name){const idx=panels.indexOf(name);openPanel(name,document.querySelectorAll('.step')[idx]);document.getElementById('workspace').scrollIntoView({behavior:'smooth',block:'start'})}
 function badge(level){let c=level==='Mudah'?'easy':level==='Sulit'?'hard':'medium';return `<span class="badge ${c}">${level||'Sedang'}</span>`}
 function escapeAttr(s){return String(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;')}
