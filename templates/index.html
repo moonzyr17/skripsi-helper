@@ -1,441 +1,104 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Skripsi Helper — AI Research Assistant</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skripsi Helper — Research Title Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { font-family: 'Inter', system-ui, sans-serif; }
-    body { background: #09090b; color: #fafafa; }
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none; z-index: 0;
-    }
-    main, header, footer { position: relative; z-index: 1; }
-    .card { background: #111113; border: 1px solid #27272a; border-radius: 12px; }
-    .input-field {
-      background: #09090b; border: 1px solid #27272a; color: #fafafa;
-      border-radius: 8px; padding: 0.6rem 0.875rem; width: 100%;
-      font-size: 0.875rem; transition: border-color 0.15s, box-shadow 0.15s; outline: none;
-    }
-    .input-field::placeholder { color: #52525b; }
-    .input-field:focus { border-color: #52525b; box-shadow: 0 0 0 3px rgba(255,255,255,0.04); }
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.5rem 1rem; border-radius: 8px; font-weight: 500;
-      font-size: 0.875rem; cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap;
-    }
-    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .btn-primary { background: #fafafa; color: #09090b; }
-    .btn-primary:hover:not(:disabled) { background: #e4e4e7; }
-    .btn-ghost { background: transparent; color: #a1a1aa; border: 1px solid #27272a; }
-    .btn-ghost:hover:not(:disabled) { background: #18181b; color: #fafafa; border-color: #3f3f46; }
-    .btn-outline { background: transparent; color: #fafafa; border: 1px solid #27272a; }
-    .btn-outline:hover:not(:disabled) { background: #18181b; border-color: #52525b; }
-    .tabs { display: flex; gap: 0; border-bottom: 1px solid #27272a; overflow-x: auto; }
-    .tab {
-      padding: 0.625rem 1rem; font-size: 0.875rem; font-weight: 500;
-      color: #71717a; cursor: pointer; border-bottom: 2px solid transparent;
-      margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; white-space: nowrap;
-    }
-    .tab:hover { color: #a1a1aa; }
-    .tab.active { color: #fafafa; border-bottom-color: #fafafa; }
-    .badge {
-      display: inline-flex; align-items: center;
-      padding: 0.15rem 0.5rem; border-radius: 4px;
-      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.02em;
-    }
-    .badge-easy   { background: #14532d; color: #86efac; }
-    .badge-medium { background: #451a03; color: #fcd34d; }
-    .badge-hard   { background: #450a0a; color: #fca5a5; }
-    .badge-neutral { background: #18181b; color: #71717a; border: 1px solid #27272a; }
-    .spinner {
-      width: 14px; height: 14px; border: 1.5px solid #3f3f46;
-      border-top-color: #fafafa; border-radius: 50%;
-      animation: spin 0.6s linear infinite; flex-shrink: 0;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .section-panel { display: none; }
-    .section-panel.active { display: block; }
-    .title-card {
-      background: #111113; border: 1px solid #27272a; border-radius: 10px;
-      padding: 1.25rem; transition: border-color 0.15s;
-    }
-    .title-card:hover { border-color: #3f3f46; }
-    .divider { border: none; border-top: 1px solid #27272a; margin: 0; }
-    kbd { background: #18181b; border: 1px solid #27272a; border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.75rem; color: #71717a; }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
-    .toast {
-      position: fixed; bottom: 1.5rem; right: 1.5rem;
-      padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.875rem;
-      font-weight: 500; z-index: 9999; max-width: 320px;
-      display: flex; align-items: center; gap: 0.5rem;
-      animation: slideUp 0.2s ease;
-    }
-    @keyframes slideUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .toast-info    { background: #18181b; border: 1px solid #27272a; color: #a1a1aa; }
-    .toast-success { background: #14532d; border: 1px solid #166534; color: #86efac; }
-    .toast-error   { background: #450a0a; border: 1px solid #7f1d1d; color: #fca5a5; }
-    .result-label { font-size: 0.75rem; font-weight: 500; color: #52525b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
-    .result-value { font-size: 0.875rem; color: #d4d4d8; line-height: 1.6; }
-    .paper-card { background: #111113; border: 1px solid #27272a; border-radius: 10px; padding: 1rem; transition: border-color 0.15s; }
-    .paper-card:hover { border-color: #3f3f46; }
+    *{font-family:Inter,system-ui,sans-serif} body{background:#f7f7f8;color:#18181b}.shell{max-width:1120px;margin:0 auto}.panel{background:#fff;border:1px solid #e4e4e7;border-radius:22px;box-shadow:0 18px 45px rgba(24,24,27,.06)}.soft{background:#fafafa;border:1px solid #e4e4e7;border-radius:16px}.input{width:100%;border:1px solid #d4d4d8;background:#fff;border-radius:12px;padding:.8rem .95rem;font-size:.92rem;outline:none}.input:focus{border-color:#18181b;box-shadow:0 0 0 4px rgba(24,24,27,.08)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border-radius:12px;padding:.78rem 1rem;font-weight:700;font-size:.9rem;transition:.15s;white-space:nowrap}.btn:disabled{opacity:.55}.btn-dark{background:#18181b;color:white}.btn-dark:hover{background:#27272a}.btn-light{background:#fff;border:1px solid #d4d4d8;color:#27272a}.btn-light:hover{background:#f4f4f5}.step{display:flex;align-items:center;gap:.65rem;padding:.75rem 1rem;border-radius:14px;color:#71717a;font-weight:700;font-size:.86rem;border:1px solid transparent;cursor:pointer}.step.active{background:#18181b;color:#fff}.step.ready{background:#fff;border-color:#e4e4e7;color:#27272a}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:.22rem .62rem;font-size:.72rem;font-weight:800}.easy{background:#dcfce7;color:#166534}.medium{background:#fef3c7;color:#92400e}.hard{background:#fee2e2;color:#991b1b}.neutral{background:#f4f4f5;color:#52525b}.title-card{background:white;border:1px solid #e4e4e7;border-radius:18px;padding:1.1rem;transition:.15s}.title-card:hover{border-color:#a1a1aa;box-shadow:0 10px 28px rgba(24,24,27,.06)}.hidden-panel{display:none}.hidden-panel.active{display:block}.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:#18181b;color:#fff;padding:.9rem 1.05rem;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.22);z-index:99;font-size:.9rem;max-width:92vw}.paper{background:#fff;border:1px solid #e4e4e7;border-radius:16px;padding:1rem}.label{font-size:.72rem;font-weight:800;color:#71717a;text-transform:uppercase;letter-spacing:.06em}.value{font-size:.93rem;color:#3f3f46;line-height:1.65}@media(max-width:720px){.hero-title{font-size:2rem}.steps{display:grid;grid-template-columns:1fr 1fr}.step{font-size:.78rem;padding:.65rem}.panel{border-radius:18px}.mobile-stack{flex-direction:column}.mobile-stack>*{width:100%}}
   </style>
 </head>
-<body class="min-h-screen">
-
-  <!-- Header -->
-  <header class="border-b border-zinc-800 px-6 py-3">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
+<body>
+  <header class="bg-white/80 backdrop-blur border-b border-zinc-200 sticky top-0 z-20">
+    <div class="shell px-4 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center">
-          <span class="text-black font-bold text-xs">S</span>
-        </div>
-        <span class="font-semibold text-sm text-white">Skripsi Helper</span>
-        <span class="text-zinc-700 text-sm">/</span>
-        <span class="text-zinc-500 text-sm">AI Research Assistant</span>
+        <div class="w-10 h-10 rounded-2xl bg-zinc-900 text-white grid place-items-center font-black">S</div>
+        <div><div class="font-extrabold text-zinc-900">Skripsi Helper</div><div class="text-xs text-zinc-500">AI research assistant untuk semua jurusan</div></div>
       </div>
-      <span class="badge badge-neutral hidden md:inline-flex">Groq · Llama 3.3 70B</span>
+      <a href="https://github.com/moonzyr17/skripsi-helper" target="_blank" class="btn btn-light py-2 hidden sm:inline-flex">GitHub</a>
     </div>
   </header>
 
-  <main class="max-w-4xl mx-auto px-4 py-10">
-
-    <!-- Hero -->
-    <div class="mb-10 text-center">
-      <h1 class="text-3xl font-bold text-white mb-3 tracking-tight">Temukan Judul Skripsi yang Tepat</h1>
-      <p class="text-zinc-400 text-base max-w-xl mx-auto leading-relaxed">
-        Untuk semua jurusan — Informatika, Ekonomi, Hukum, Kesehatan, Teknik, Sosial, dan lainnya.
-        AI akan generate 10 judul, cek riset terdahulu, saran metodologi, dan outline BAB 1.
-      </p>
-    </div>
-
-    <!-- Input Form -->
-    <div class="card p-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Bidang / Jurusan <span class="text-red-500">*</span></label>
-          <input id="bidang" class="input-field" placeholder="cth: Hukum Perdata, Manajemen, Keperawatan, Teknik Sipil"/>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Kata Kunci / Topik <span class="text-red-500">*</span></label>
-          <input id="keywords" class="input-field" placeholder="cth: kontrak digital, loyalitas pelanggan, stunting"/>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Metode / Pendekatan <span class="text-zinc-600 font-normal">(opsional)</span></label>
-          <input id="metode" class="input-field" placeholder="cth: kualitatif, regresi, eksperimen, studi kasus"/>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Jenjang</label>
-          <select id="level" class="input-field">
-            <option value="S1">S1 — Sarjana</option>
-            <option value="S2">S2 — Magister</option>
-            <option value="D3">D3 — Diploma</option>
-          </select>
+  <main class="shell px-4 py-8 md:py-12">
+    <section class="grid lg:grid-cols-[1.05fr_.95fr] gap-6 items-start mb-8">
+      <div class="panel p-6 md:p-8">
+        <span class="badge neutral mb-4">Untuk D3, S1, dan S2</span>
+        <h1 class="hero-title text-4xl md:text-5xl font-black tracking-tight text-zinc-950 mb-4">Cari judul skripsi jadi lebih gampang.</h1>
+        <p class="text-zinc-600 leading-relaxed mb-6">Generate 10 judul, pilih satu, lalu lanjut cek riset terdahulu, saran metodologi, dan outline BAB 1. Tidak cuma Informatika — bisa untuk Hukum, Ekonomi, Kesehatan, Teknik, Sosial, Pendidikan, dan lainnya.</p>
+        <div class="grid sm:grid-cols-3 gap-3 text-sm">
+          <div class="soft p-4"><b>10</b><br><span class="text-zinc-500">judul sekali generate</span></div>
+          <div class="soft p-4"><b>4 fitur</b><br><span class="text-zinc-500">dalam satu workflow</span></div>
+          <div class="soft p-4"><b>Gratis</b><br><span class="text-zinc-500">pakai Groq + Scholar</span></div>
         </div>
       </div>
-      <hr class="divider mb-5"/>
-      <div class="flex items-center gap-3">
-        <button class="btn btn-primary" id="genBtn" onclick="generateTitles()">
-          <span id="genSpinner" class="spinner hidden"></span>
-          <span id="genBtnText">Generate 10 Judul</span>
-        </button>
-        <button class="btn btn-ghost" onclick="clearAll()">Reset</button>
-        <span class="text-zinc-600 text-xs ml-auto hidden md:block">Tekan <kbd>Enter</kbd> untuk generate</span>
-      </div>
-    </div>
 
-    <!-- Results -->
-    <div id="results" class="hidden">
-      <div class="tabs mb-6">
-        <button class="tab active" onclick="switchTab('titles', this)">Judul yang Disarankan</button>
-        <button class="tab" onclick="switchTab('research', this)">Cek Riset Terdahulu</button>
-        <button class="tab" onclick="switchTab('methodology', this)">Saran Metodologi</button>
-        <button class="tab" onclick="switchTab('outline', this)">Outline BAB 1</button>
-      </div>
-
-      <!-- Titles Panel -->
-      <div id="panel-titles" class="section-panel active">
-        <div id="titles-list" class="flex flex-col gap-3"></div>
-      </div>
-
-      <!-- Research Panel -->
-      <div id="panel-research" class="section-panel">
-        <div class="card p-5 mb-4">
-          <p class="text-sm text-zinc-400 mb-3">Cek apakah topik penelitianmu sudah pernah diteliti di Semantic Scholar.</p>
-          <div class="flex gap-2">
-            <input id="researchQuery" class="input-field" placeholder="Masukkan judul atau keyword..."/>
-            <button class="btn btn-outline" onclick="checkResearch()">
-              <span id="resSpinner" class="spinner hidden"></span>
-              <span id="resBtnText">Cek</span>
-            </button>
-          </div>
+      <div class="panel p-5 md:p-6">
+        <h2 class="font-black text-xl mb-1">Mulai dari topikmu</h2>
+        <p class="text-sm text-zinc-500 mb-5">Isi minimal bidang dan kata kunci.</p>
+        <div class="space-y-4">
+          <div><label class="label block mb-1.5">Bidang / Jurusan *</label><input id="bidang" class="input" placeholder="Contoh: Akuntansi, Hukum, Keperawatan" /></div>
+          <div><label class="label block mb-1.5">Kata Kunci / Topik *</label><input id="keywords" class="input" placeholder="Contoh: audit, kontrak digital, stunting" /></div>
+          <div><label class="label block mb-1.5">Metode / Pendekatan</label><input id="metode" class="input" placeholder="Opsional: kualitatif, regresi, studi kasus" /></div>
+          <div><label class="label block mb-1.5">Jenjang</label><select id="level" class="input"><option>S1</option><option>S2</option><option>D3</option></select></div>
+          <div class="flex gap-3 mobile-stack"><button id="genBtn" class="btn btn-dark flex-1" onclick="generateTitles()"><span id="genSpin" class="spinner hidden"></span><span id="genText">Generate 10 Judul</span></button><button class="btn btn-light" onclick="clearAll()">Reset</button></div>
         </div>
-        <div id="research-results"></div>
       </div>
+    </section>
 
-      <!-- Methodology Panel -->
-      <div id="panel-methodology" class="section-panel">
-        <div class="card p-5 mb-4">
-          <p class="text-sm text-zinc-400 mb-3">Dapatkan rekomendasi metodologi, tools, dataset, dan estimasi waktu penelitian.</p>
-          <div class="flex gap-2">
-            <input id="methQuery" class="input-field" placeholder="Masukkan judul skripsi..."/>
-            <button class="btn btn-outline" onclick="suggestMethodology()">
-              <span id="methSpinner" class="spinner hidden"></span>
-              <span id="methBtnText">Analisis</span>
-            </button>
-          </div>
+    <section id="workspace" class="hidden">
+      <div class="panel p-4 md:p-5 mb-5">
+        <div class="steps flex gap-2 overflow-x-auto">
+          <button class="step active" onclick="openPanel('titles',this)">1. Pilih Judul</button>
+          <button class="step ready" onclick="openPanel('research',this)">2. Cek Riset</button>
+          <button class="step ready" onclick="openPanel('methodology',this)">3. Metodologi</button>
+          <button class="step ready" onclick="openPanel('outline',this)">4. Outline BAB 1</button>
         </div>
-        <div id="methodology-results"></div>
-      </div>
-
-      <!-- Outline Panel -->
-      <div id="panel-outline" class="section-panel">
-        <div class="card p-5 mb-4">
-          <p class="text-sm text-zinc-400 mb-3">Generate outline BAB 1 lengkap — latar belakang, rumusan masalah, tujuan, batasan, dan sistematika.</p>
-          <div class="flex gap-2">
-            <input id="outlineQuery" class="input-field" placeholder="Masukkan judul skripsi..."/>
-            <button class="btn btn-outline" onclick="generateOutline()">
-              <span id="outSpinner" class="spinner hidden"></span>
-              <span id="outBtnText">Generate</span>
-            </button>
-          </div>
+        <div id="selectedBox" class="hidden mt-4 soft p-4">
+          <div class="label mb-1">Judul terpilih</div>
+          <div id="selectedTitle" class="font-bold text-zinc-900 text-sm leading-relaxed"></div>
+          <div class="flex gap-2 flex-wrap mt-3"><button class="btn btn-dark py-2" onclick="openByName('research')">Cek Riset</button><button class="btn btn-light py-2" onclick="openByName('methodology')">Saran Metodologi</button><button class="btn btn-light py-2" onclick="openByName('outline')">Outline BAB 1</button></div>
         </div>
-        <div id="outline-results"></div>
       </div>
-    </div>
 
+      <div id="panel-titles" class="hidden-panel active"><div id="titles-list" class="grid gap-3"></div></div>
+
+      <div id="panel-research" class="hidden-panel">
+        <div class="panel p-5 mb-4"><h3 class="font-black text-xl mb-2">Cek riset terdahulu</h3><p class="text-zinc-500 text-sm mb-4">Cari paper yang mirip di Semantic Scholar.</p><div class="flex gap-3 mobile-stack"><input id="researchQuery" class="input" placeholder="Judul otomatis masuk setelah dipilih"/><button class="btn btn-dark" onclick="checkResearch()"><span id="resSpin" class="spinner hidden"></span><span id="resText">Cek Riset</span></button></div></div><div id="research-results" class="grid gap-3"></div>
+      </div>
+
+      <div id="panel-methodology" class="hidden-panel">
+        <div class="panel p-5 mb-4"><h3 class="font-black text-xl mb-2">Saran metodologi</h3><p class="text-zinc-500 text-sm mb-4">Rekomendasi jenis penelitian, langkah, tools, dataset, dan estimasi waktu.</p><div class="flex gap-3 mobile-stack"><input id="methQuery" class="input" placeholder="Judul otomatis masuk setelah dipilih"/><button class="btn btn-dark" onclick="suggestMethodology()"><span id="methSpin" class="spinner hidden"></span><span id="methText">Analisis</span></button></div></div><div id="methodology-results"></div>
+      </div>
+
+      <div id="panel-outline" class="hidden-panel">
+        <div class="panel p-5 mb-4"><h3 class="font-black text-xl mb-2">Outline BAB 1</h3><p class="text-zinc-500 text-sm mb-4">Generate draft pendahuluan: latar belakang, rumusan masalah, tujuan, manfaat, batasan, sistematika.</p><div class="flex gap-3 mobile-stack"><input id="outlineQuery" class="input" placeholder="Judul otomatis masuk setelah dipilih"/><button class="btn btn-dark" onclick="generateOutline()"><span id="outSpin" class="spinner hidden"></span><span id="outText">Generate Outline</span></button></div></div><div id="outline-results"></div>
+      </div>
+    </section>
   </main>
 
-  <footer class="border-t border-zinc-800 px-6 py-4 mt-10">
-    <div class="max-w-4xl mx-auto flex items-center justify-between text-xs text-zinc-600">
-      <span>Skripsi Helper · Untuk semua jurusan di Indonesia</span>
-      <a href="https://github.com/moonzyr17/skripsi-helper" target="_blank" class="hover:text-zinc-400 transition-colors">GitHub →</a>
-    </div>
-  </footer>
-
-  <script>
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && ['bidang','keywords','metode'].includes(document.activeElement.id)) generateTitles();
-    });
-
-    function switchTab(tab, el) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-      el.classList.add('active');
-      document.getElementById(`panel-${tab}`).classList.add('active');
-    }
-
-    function switchTabByName(tab) {
-      const panels = ['titles','research','methodology','outline'];
-      const idx = panels.indexOf(tab);
-      if (idx === -1) return;
-      document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i === idx));
-      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById(`panel-${tab}`).classList.add('active');
-    }
-
-    function clearAll() {
-      ['bidang','keywords','metode','researchQuery','methQuery','outlineQuery'].forEach(id => {
-        const el = document.getElementById(id); if (el) el.value = '';
-      });
-      document.getElementById('results').classList.add('hidden');
-    }
-
-    function setLoading(spinnerId, btnTextId, loading) {
-      document.getElementById(spinnerId).classList.toggle('hidden', !loading);
-      document.getElementById(btnTextId).classList.toggle('hidden', loading);
-      const btn = document.getElementById(spinnerId).closest('button');
-      if (btn) btn.disabled = loading;
-    }
-
-    function diffBadge(level) {
-      const map = { 'Mudah': 'badge-easy', 'Sedang': 'badge-medium', 'Sulit': 'badge-hard' };
-      return `<span class="badge ${map[level] || 'badge-medium'}">${level}</span>`;
-    }
-
-    function useTitle(judul) {
-      document.getElementById('researchQuery').value = judul;
-      document.getElementById('methQuery').value = judul;
-      document.getElementById('outlineQuery').value = judul;
-      showToast('Judul dipilih — gunakan tab lain untuk analisis lebih lanjut.', 'success');
-    }
-
-    async function generateTitles() {
-      const bidang = document.getElementById('bidang').value.trim();
-      const keywords = document.getElementById('keywords').value.trim();
-      if (!bidang || !keywords) { showToast('Isi bidang dan kata kunci terlebih dahulu.', 'error'); return; }
-      setLoading('genSpinner', 'genBtnText', true);
-      try {
-        const res = await fetch('/api/generate-titles', {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ bidang, keywords, metode: document.getElementById('metode').value, level: document.getElementById('level').value })
-        });
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message);
-        renderTitles(data.titles);
-        document.getElementById('results').classList.remove('hidden');
-        switchTabByName('titles');
-      } catch(e) { showToast(e.message, 'error'); }
-      finally { setLoading('genSpinner', 'genBtnText', false); }
-    }
-
-    function renderTitles(titles) {
-      document.getElementById('titles-list').innerHTML = titles.map((t, i) => `
-        <div class="title-card">
-          <div class="flex items-start justify-between gap-3 mb-3">
-            <span class="text-zinc-600 text-xs font-mono">${String(i+1).padStart(2,'0')}</span>
-            <div class="flex gap-1.5 flex-wrap justify-end">
-              ${diffBadge(t.tingkat_kesulitan)}
-              <span class="badge badge-neutral">${t.bidang}</span>
-            </div>
-          </div>
-          <p class="text-white font-semibold text-sm leading-relaxed mb-2">${t.judul}</p>
-          <p class="text-zinc-500 text-xs mb-1">Metode: <span class="text-zinc-400">${t.metode}</span></p>
-          <p class="text-zinc-600 text-xs leading-relaxed mb-4">${t.alasan}</p>
-          <button class="btn btn-ghost text-xs py-1.5" onclick="useTitle('${t.judul.replace(/'/g, "\\'")}')">
-            Gunakan judul ini →
-          </button>
-        </div>`).join('');
-    }
-
-    async function checkResearch() {
-      const query = document.getElementById('researchQuery').value.trim();
-      if (!query) { showToast('Masukkan judul atau keyword.', 'error'); return; }
-      setLoading('resSpinner', 'resBtnText', true);
-      try {
-        const res = await fetch('/api/check-research', {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({judul: query})
-        });
-        const data = await res.json();
-        renderResearch(data.papers);
-      } catch(e) { showToast(e.message, 'error'); }
-      finally { setLoading('resSpinner', 'resBtnText', false); }
-    }
-
-    function renderResearch(papers) {
-      const container = document.getElementById('research-results');
-      if (!papers.length) {
-        container.innerHTML = `<div class="card p-6 text-center">
-          <p class="text-2xl mb-2">✓</p>
-          <p class="text-white font-medium mb-1">Tidak ditemukan penelitian serupa</p>
-          <p class="text-zinc-500 text-sm">Topik ini cukup unik dan layak untuk diteliti.</p>
-        </div>`; return;
-      }
-      container.innerHTML = `
-        <p class="text-xs text-zinc-500 mb-3">${papers.length} penelitian serupa ditemukan di Semantic Scholar</p>
-        <div class="flex flex-col gap-3">
-          ${papers.map(p => `<div class="paper-card">
-            <p class="text-white font-medium text-sm mb-1 leading-snug">${p.title || '-'}</p>
-            <p class="text-zinc-500 text-xs mb-2">${p.authors?.map(a => a.name).join(', ') || 'Unknown'} · ${p.year || '-'}</p>
-            <p class="text-zinc-600 text-xs leading-relaxed mb-3 line-clamp-2">${p.abstract || 'Tidak ada abstrak.'}</p>
-            ${p.url ? `<a href="${p.url}" target="_blank" class="text-zinc-400 text-xs hover:text-white transition-colors">Lihat paper →</a>` : ''}
-          </div>`).join('')}
-        </div>`;
-    }
-
-    async function suggestMethodology() {
-      const judul = document.getElementById('methQuery').value.trim();
-      if (!judul) { showToast('Masukkan judul skripsi.', 'error'); return; }
-      setLoading('methSpinner', 'methBtnText', true);
-      try {
-        const res = await fetch('/api/suggest-methodology', {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({judul})
-        });
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message);
-        renderMethodology(data.methodology);
-      } catch(e) { showToast(e.message, 'error'); }
-      finally { setLoading('methSpinner', 'methBtnText', false); }
-    }
-
-    function renderMethodology(m) {
-      document.getElementById('methodology-results').innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-          <div class="card p-4"><p class="result-label">Jenis Penelitian</p><p class="result-value font-medium text-white">${m.jenis_penelitian}</p></div>
-          <div class="card p-4"><p class="result-label">Metodologi Utama</p><p class="result-value font-medium text-white">${m.metodologi_utama}</p></div>
-          <div class="card p-4"><p class="result-label">Estimasi Waktu</p><p class="result-value font-medium text-white">${m.estimasi_waktu}</p></div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-          <div class="card p-4">
-            <p class="result-label">Langkah Penelitian</p>
-            <ol class="space-y-1.5 mt-1">
-              ${m.langkah_penelitian?.map((l,i) => `<li class="flex gap-2 text-sm text-zinc-300"><span class="text-zinc-600 font-mono text-xs mt-0.5 flex-shrink-0">${i+1}.</span><span>${l}</span></li>`).join('') || ''}
-            </ol>
-          </div>
-          <div class="flex flex-col gap-3">
-            <div class="card p-4">
-              <p class="result-label">Tools & Teknologi</p>
-              <div class="flex flex-wrap gap-1.5 mt-1">${m.tools_teknologi?.map(t => `<span class="badge badge-neutral">${t}</span>`).join('') || ''}</div>
-            </div>
-            <div class="card p-4"><p class="result-label">Dataset / Sumber Data</p><p class="result-value">${m.dataset_saran}</p></div>
-            <div class="card p-4">
-              <p class="result-label">Referensi Metode</p>
-              <ul class="space-y-1 mt-1">${m.referensi_metode?.map(r => `<li class="text-zinc-500 text-xs">· ${r}</li>`).join('') || ''}</ul>
-            </div>
-          </div>
-        </div>
-        <div class="card p-4"><p class="result-label">💡 Tips</p><p class="result-value">${m.tips}</p></div>`;
-    }
-
-    async function generateOutline() {
-      const judul = document.getElementById('outlineQuery').value.trim();
-      if (!judul) { showToast('Masukkan judul skripsi.', 'error'); return; }
-      setLoading('outSpinner', 'outBtnText', true);
-      try {
-        const res = await fetch('/api/generate-outline', {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({judul})
-        });
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message);
-        renderOutline(data.outline, judul);
-      } catch(e) { showToast(e.message, 'error'); }
-      finally { setLoading('outSpinner', 'outBtnText', false); }
-    }
-
-    function renderOutline(o, judul) {
-      const list = (items, ordered=true) => ordered
-        ? `<ol class="space-y-1">${items?.map((x,i) => `<li class="flex gap-2 text-sm text-zinc-300"><span class="text-zinc-600 font-mono text-xs mt-0.5 flex-shrink-0">${i+1}.</span><span>${x}</span></li>`).join('') || ''}</ol>`
-        : `<ul class="space-y-1">${items?.map(x => `<li class="text-sm text-zinc-300">· ${x}</li>`).join('') || ''}</ul>`;
-
-      document.getElementById('outline-results').innerHTML = `
-        <div class="card p-6">
-          <div class="mb-6">
-            <p class="text-xs text-zinc-500 mb-1 uppercase tracking-widest font-medium">BAB I — PENDAHULUAN</p>
-            <p class="text-white font-semibold text-base leading-snug">${judul}</p>
-          </div>
-          <hr class="divider mb-6"/>
-          <div class="mb-5"><p class="text-xs font-semibold text-zinc-400 mb-2">1.1 Latar Belakang</p><p class="text-sm text-zinc-300 leading-relaxed">${o.latar_belakang}</p></div>
-          <div class="mb-5"><p class="text-xs font-semibold text-zinc-400 mb-2">1.2 Rumusan Masalah</p>${list(o.rumusan_masalah)}</div>
-          <div class="mb-5"><p class="text-xs font-semibold text-zinc-400 mb-2">1.3 Tujuan Penelitian</p>${list(o.tujuan_penelitian)}</div>
-          <div class="mb-5"><p class="text-xs font-semibold text-zinc-400 mb-2">1.4 Manfaat Penelitian</p>
-            <p class="text-sm text-zinc-300"><span class="text-zinc-500">Teoritis —</span> ${o.manfaat_penelitian?.teoritis}</p>
-            <p class="text-sm text-zinc-300 mt-1"><span class="text-zinc-500">Praktis —</span> ${o.manfaat_penelitian?.praktis}</p>
-          </div>
-          <div class="mb-5"><p class="text-xs font-semibold text-zinc-400 mb-2">1.5 Batasan Masalah</p>${list(o.batasan_masalah)}</div>
-          <div><p class="text-xs font-semibold text-zinc-400 mb-2">1.6 Sistematika Penulisan</p>${list(o.sistematika_penulisan, false)}</div>
-        </div>`;
-    }
-
-    function showToast(msg, type = 'info') {
-      const t = document.createElement('div');
-      t.className = `toast toast-${type}`;
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.2s'; setTimeout(() => t.remove(), 200); }, 3000);
-    }
-  </script>
+<script>
+const panels=['titles','research','methodology','outline'];
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&['bidang','keywords','metode'].includes(document.activeElement.id))generateTitles()});
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+function setLoad(spin,text,on){document.getElementById(spin).classList.toggle('hidden',!on);document.getElementById(text).classList.toggle('hidden',on)}
+function clearAll(){['bidang','keywords','metode','researchQuery','methQuery','outlineQuery'].forEach(id=>{let e=document.getElementById(id);if(e)e.value=''});document.getElementById('workspace').classList.add('hidden');document.getElementById('selectedBox').classList.add('hidden')}
+function openPanel(name,btn){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));if(btn)btn.classList.add('active');document.querySelectorAll('.hidden-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active')}
+function openByName(name){const idx=panels.indexOf(name);openPanel(name,document.querySelectorAll('.step')[idx]);document.getElementById('workspace').scrollIntoView({behavior:'smooth',block:'start'})}
+function badge(level){let c=level==='Mudah'?'easy':level==='Sulit'?'hard':'medium';return `<span class="badge ${c}">${level||'Sedang'}</span>`}
+function escapeAttr(s){return String(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;')}
+async function generateTitles(){let bidang=document.getElementById('bidang').value.trim(),keywords=document.getElementById('keywords').value.trim();if(!bidang||!keywords)return toast('Isi bidang dan kata kunci dulu.');setLoad('genSpin','genText',true);try{let r=await fetch('/api/generate-titles',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bidang,keywords,metode:document.getElementById('metode').value,level:document.getElementById('level').value})});let d=await r.json();if(!d.success)throw new Error(d.message);renderTitles(d.titles);document.getElementById('workspace').classList.remove('hidden');openByName('titles')}catch(e){toast('Error: '+e.message)}finally{setLoad('genSpin','genText',false)}}
+function renderTitles(titles){document.getElementById('titles-list').innerHTML=titles.map((t,i)=>`<article class="title-card"><div class="flex items-start justify-between gap-3 mb-3"><div class="text-zinc-400 font-black text-sm">${String(i+1).padStart(2,'0')}</div><div class="flex gap-2 flex-wrap justify-end">${badge(t.tingkat_kesulitan)}<span class="badge neutral">${t.bidang||'-'}</span></div></div><h3 class="font-black text-zinc-950 leading-snug mb-2">${t.judul}</h3><p class="text-sm text-zinc-500 mb-2"><b>Metode:</b> ${t.metode||'-'}</p><p class="text-sm text-zinc-600 leading-relaxed mb-4">${t.alasan||''}</p><button class="btn btn-dark py-2" onclick="useTitle('${escapeAttr(t.judul)}')">Pilih & lanjut analisis</button></article>`).join('')}
+function useTitle(judul){['researchQuery','methQuery','outlineQuery'].forEach(id=>document.getElementById(id).value=judul);document.getElementById('selectedTitle').textContent=judul;document.getElementById('selectedBox').classList.remove('hidden');toast('Judul dipilih. Tombol analisis sudah muncul di atas.');document.getElementById('selectedBox').scrollIntoView({behavior:'smooth',block:'center'})}
+async function checkResearch(){let q=document.getElementById('researchQuery').value.trim();if(!q)return toast('Pilih/isi judul dulu.');setLoad('resSpin','resText',true);try{let r=await fetch('/api/check-research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({judul:q})});let d=await r.json();renderResearch(d.papers||[])}catch(e){toast('Error: '+e.message)}finally{setLoad('resSpin','resText',false)}}
+function renderResearch(p){document.getElementById('research-results').innerHTML=p.length?p.map(x=>`<div class="paper"><h4 class="font-black mb-1">${x.title||'-'}</h4><p class="text-xs text-zinc-500 mb-2">${(x.authors||[]).map(a=>a.name).join(', ')||'Unknown'} · ${x.year||'-'}</p><p class="value mb-2">${x.abstract||'Tidak ada abstrak.'}</p>${x.url?`<a class="font-bold text-sm underline" target="_blank" href="${x.url}">Lihat paper</a>`:''}</div>`).join(''):`<div class="panel p-6 text-center"><div class="text-3xl mb-2">✅</div><b>Tidak ditemukan penelitian serupa</b><p class="text-zinc-500 text-sm mt-1">Topik ini terlihat cukup unik.</p></div>`}
+async function suggestMethodology(){let q=document.getElementById('methQuery').value.trim();if(!q)return toast('Pilih/isi judul dulu.');setLoad('methSpin','methText',true);try{let r=await fetch('/api/suggest-methodology',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({judul:q})});let d=await r.json();if(!d.success)throw new Error(d.message);renderMethodology(d.methodology)}catch(e){toast('Error: '+e.message)}finally{setLoad('methSpin','methText',false)}}
+function renderMethodology(m){document.getElementById('methodology-results').innerHTML=`<div class="grid md:grid-cols-3 gap-3 mb-3"><div class="panel p-4"><div class="label">Jenis</div><div class="font-black">${m.jenis_penelitian}</div></div><div class="panel p-4"><div class="label">Metode</div><div class="font-black">${m.metodologi_utama}</div></div><div class="panel p-4"><div class="label">Estimasi</div><div class="font-black">${m.estimasi_waktu}</div></div></div><div class="grid md:grid-cols-2 gap-3"><div class="panel p-5"><div class="label mb-3">Langkah Penelitian</div><ol class="space-y-2">${(m.langkah_penelitian||[]).map((x,i)=>`<li class="value"><b>${i+1}.</b> ${x}</li>`).join('')}</ol></div><div class="space-y-3"><div class="panel p-5"><div class="label mb-2">Tools</div><div class="flex gap-2 flex-wrap">${(m.tools_teknologi||[]).map(x=>`<span class="badge neutral">${x}</span>`).join('')}</div></div><div class="panel p-5"><div class="label">Dataset</div><p class="value">${m.dataset_saran}</p></div><div class="panel p-5"><div class="label">Tips</div><p class="value">${m.tips}</p></div></div></div>`}
+async function generateOutline(){let q=document.getElementById('outlineQuery').value.trim();if(!q)return toast('Pilih/isi judul dulu.');setLoad('outSpin','outText',true);try{let r=await fetch('/api/generate-outline',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({judul:q})});let d=await r.json();if(!d.success)throw new Error(d.message);renderOutline(d.outline,q)}catch(e){toast('Error: '+e.message)}finally{setLoad('outSpin','outText',false)}}
+function list(a){return `<ol class="space-y-2">${(a||[]).map((x,i)=>`<li class="value"><b>${i+1}.</b> ${x}</li>`).join('')}</ol>`}
+function section(t,c){return `<div class="mb-5"><h4 class="font-black mb-2">${t}</h4>${c}</div>`}
+function renderOutline(o,judul){document.getElementById('outline-results').innerHTML=`<div class="panel p-6"><div class="label">BAB I — Pendahuluan</div><h3 class="font-black text-xl mb-5">${judul}</h3>${section('1.1 Latar Belakang',`<p class="value">${o.latar_belakang}</p>`)}${section('1.2 Rumusan Masalah',list(o.rumusan_masalah))}${section('1.3 Tujuan Penelitian',list(o.tujuan_penelitian))}${section('1.4 Manfaat Penelitian',`<p class="value"><b>Teoritis:</b> ${o.manfaat_penelitian?.teoritis||''}</p><p class="value"><b>Praktis:</b> ${o.manfaat_penelitian?.praktis||''}</p>`)}${section('1.5 Batasan Masalah',list(o.batasan_masalah))}${section('1.6 Sistematika Penulisan',list(o.sistematika_penulisan))}</div>`}
+</script>
 </body>
 </html>
