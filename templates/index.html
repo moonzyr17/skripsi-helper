@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skripsi Helper — AI Research Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; }
+    .input-field {
+      background: #0f172a; border: 1px solid #334155; color: #e2e8f0;
+      border-radius: 0.5rem; padding: 0.6rem 1rem; width: 100%; font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus { outline: none; border-color: #38bdf8; }
+    .btn { padding: 0.5rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: opacity 0.15s; border: none; }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: #38bdf8; color: #0f172a; }
+    .btn-purple { background: #818cf8; color: #0f172a; }
+    .btn-green { background: #4ade80; color: #0f172a; }
+    .btn-yellow { background: #fbbf24; color: #0f172a; }
+    .tab { padding: 0.5rem 1.25rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 600; color: #64748b; transition: all 0.2s; }
+    .tab.active { background: #1e293b; color: #38bdf8; border: 1px solid #334155; }
+    .tab:hover:not(.active) { color: #94a3b8; }
+    .badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .badge-easy   { background: #4ade8020; color: #4ade80; }
+    .badge-medium { background: #fbbf2420; color: #fbbf24; }
+    .badge-hard   { background: #f8717120; color: #f87171; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #334155; border-top-color: #38bdf8; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .title-card { border: 1px solid #334155; border-radius: 0.75rem; padding: 1rem; background: #0f172a; transition: border-color 0.2s; }
+    .title-card:hover { border-color: #38bdf8; }
+    .section-panel { display: none; }
+    .section-panel.active { display: block; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-slate-700 px-6 py-4">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center text-white font-bold">S</div>
+        <div>
+          <h1 class="text-lg font-bold text-white">Skripsi Helper</h1>
+          <p class="text-xs text-slate-400">AI Research Assistant untuk Mahasiswa Informatika</p>
+        </div>
+      </div>
+      <span class="text-xs text-slate-500 hidden md:block">Powered by Groq + Llama 3</span>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+
+    <!-- Input Form -->
+    <div class="card p-6 mb-6">
+      <h2 class="text-base font-bold text-white mb-4">🎯 Informasi Penelitian</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">Bidang / Topik *</label>
+          <input id="bidang" class="input-field" placeholder="cth: Machine Learning, IoT, Keamanan Siber"/>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">Kata Kunci *</label>
+          <input id="keywords" class="input-field" placeholder="cth: deteksi wajah, klasifikasi, prediksi"/>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">Metode yang Diminati</label>
+          <input id="metode" class="input-field" placeholder="cth: CNN, Random Forest, LSTM (opsional)"/>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">Jenjang</label>
+          <select id="level" class="input-field">
+            <option value="S1">S1 (Sarjana)</option>
+            <option value="S2">S2 (Magister)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 flex gap-3">
+        <button class="btn btn-primary" onclick="generateTitles()">
+          <span id="genBtnText">✨ Generate Judul</span>
+          <span id="genSpinner" class="spinner hidden ml-2"></span>
+        </button>
+        <button class="btn btn-yellow" onclick="clearAll()">🗑️ Reset</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="hidden">
+
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-4 flex-wrap">
+        <button class="tab active" onclick="switchTab('titles')">📋 Judul (5)</button>
+        <button class="tab" onclick="switchTab('research')" id="tabResearch">🔍 Cek Riset</button>
+        <button class="tab" onclick="switchTab('methodology')" id="tabMethodology">🔬 Metodologi</button>
+        <button class="tab" onclick="switchTab('outline')" id="tabOutline">📝 Outline BAB 1</button>
+      </div>
+
+      <!-- Titles Panel -->
+      <div id="panel-titles" class="section-panel active">
+        <div id="titles-list" class="flex flex-col gap-3"></div>
+      </div>
+
+      <!-- Research Panel -->
+      <div id="panel-research" class="section-panel">
+        <div class="card p-4 mb-4">
+          <p class="text-sm text-slate-400 mb-3">Cek apakah judul yang dipilih sudah pernah diteliti sebelumnya di Semantic Scholar.</p>
+          <div class="flex gap-2">
+            <input id="researchQuery" class="input-field flex-1" placeholder="Masukkan judul atau keyword untuk dicek..."/>
+            <button class="btn btn-primary" onclick="checkResearch()">
+              <span id="resBtnText">🔍 Cek</span>
+              <span id="resSpinner" class="spinner hidden ml-1"></span>
+            </button>
+          </div>
+        </div>
+        <div id="research-results"></div>
+      </div>
+
+      <!-- Methodology Panel -->
+      <div id="panel-methodology" class="section-panel">
+        <div class="card p-4 mb-4">
+          <p class="text-sm text-slate-400 mb-3">Dapatkan saran metodologi penelitian berdasarkan judul skripsi.</p>
+          <div class="flex gap-2">
+            <input id="methQuery" class="input-field flex-1" placeholder="Masukkan judul skripsi..."/>
+            <button class="btn btn-purple" onclick="suggestMethodology()">
+              <span id="methBtnText">🔬 Analisis</span>
+              <span id="methSpinner" class="spinner hidden ml-1"></span>
+            </button>
+          </div>
+        </div>
+        <div id="methodology-results"></div>
+      </div>
+
+      <!-- Outline Panel -->
+      <div id="panel-outline" class="section-panel">
+        <div class="card p-4 mb-4">
+          <p class="text-sm text-slate-400 mb-3">Generate outline BAB 1 (Pendahuluan) otomatis berdasarkan judul skripsi.</p>
+          <div class="flex gap-2">
+            <input id="outlineQuery" class="input-field flex-1" placeholder="Masukkan judul skripsi..."/>
+            <button class="btn btn-green" onclick="generateOutline()">
+              <span id="outBtnText">📝 Generate</span>
+              <span id="outSpinner" class="spinner hidden ml-1"></span>
+            </button>
+          </div>
+        </div>
+        <div id="outline-results"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let generatedTitles = [];
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`panel-${tab}`).classList.add('active');
+    }
+
+    function clearAll() {
+      ['bidang','keywords','metode','researchQuery','methQuery','outlineQuery'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('results').classList.add('hidden');
+      generatedTitles = [];
+    }
+
+    function setLoading(btnTextId, spinnerId, loading) {
+      document.getElementById(btnTextId).classList.toggle('hidden', loading);
+      document.getElementById(spinnerId).classList.toggle('hidden', !loading);
+    }
+
+    function diffBadge(level) {
+      const map = { 'Mudah': 'badge-easy', 'Sedang': 'badge-medium', 'Sulit': 'badge-hard' };
+      return `<span class="badge ${map[level] || 'badge-medium'}">${level}</span>`;
+    }
+
+    function useTitle(judul) {
+      document.getElementById('researchQuery').value = judul;
+      document.getElementById('methQuery').value = judul;
+      document.getElementById('outlineQuery').value = judul;
+      showToast('Judul dipilih! Cek tab Riset, Metodologi, atau Outline.');
+    }
+
+    async function generateTitles() {
+      const bidang = document.getElementById('bidang').value.trim();
+      const keywords = document.getElementById('keywords').value.trim();
+      if (!bidang || !keywords) { showToast('Isi bidang dan kata kunci dulu!', 'error'); return; }
+
+      setLoading('genBtnText', 'genSpinner', true);
+      try {
+        const res = await fetch('/api/generate-titles', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            bidang, keywords,
+            metode: document.getElementById('metode').value,
+            level: document.getElementById('level').value
+          })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+
+        generatedTitles = data.titles;
+        renderTitles(data.titles);
+        document.getElementById('results').classList.remove('hidden');
+        switchTabDirect('titles');
+      } catch(e) {
+        showToast('Error: ' + e.message, 'error');
+      } finally {
+        setLoading('genBtnText', 'genSpinner', false);
+      }
+    }
+
+    function renderTitles(titles) {
+      const container = document.getElementById('titles-list');
+      container.innerHTML = titles.map((t, i) => `
+        <div class="title-card">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <span class="text-xs text-slate-500 font-mono">#${i+1}</span>
+            <div class="flex gap-2 flex-wrap">
+              ${diffBadge(t.tingkat_kesulitan)}
+              <span class="badge" style="background:#38bdf820;color:#38bdf8">${t.bidang}</span>
+            </div>
+          </div>
+          <p class="text-white font-semibold text-sm mb-2">${t.judul}</p>
+          <p class="text-slate-400 text-xs mb-1">🔬 Metode: <span class="text-slate-300">${t.metode}</span></p>
+          <p class="text-slate-500 text-xs mb-3">${t.alasan}</p>
+          <button class="btn btn-primary text-xs py-1" onclick="useTitle('${t.judul.replace(/'/g, "\\'")}')">
+            Gunakan Judul Ini →
+          </button>
+        </div>
+      `).join('');
+    }
+
+    async function checkResearch() {
+      const query = document.getElementById('researchQuery').value.trim();
+      if (!query) { showToast('Masukkan judul atau keyword!', 'error'); return; }
+      setLoading('resBtnText', 'resSpinner', true);
+      try {
+        const res = await fetch('/api/check-research', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({judul: query})
+        });
+        const data = await res.json();
+        renderResearch(data.papers);
+      } catch(e) {
+        showToast('Error: ' + e.message, 'error');
+      } finally {
+        setLoading('resBtnText', 'resSpinner', false);
+      }
+    }
+
+    function renderResearch(papers) {
+      const container = document.getElementById('research-results');
+      if (!papers.length) {
+        container.innerHTML = `<div class="card p-4 text-center text-slate-400">✅ Tidak ditemukan penelitian serupa. Topik ini cukup unik!</div>`;
+        return;
+      }
+      container.innerHTML = `
+        <p class="text-xs text-slate-400 mb-3">Ditemukan ${papers.length} penelitian serupa:</p>
+        ${papers.map(p => `
+          <div class="card p-4 mb-3">
+            <p class="text-white font-semibold text-sm mb-1">${p.title || '-'}</p>
+            <p class="text-slate-400 text-xs mb-1">
+              ${p.authors?.map(a => a.name).join(', ') || 'Unknown'} · ${p.year || '-'}
+            </p>
+            <p class="text-slate-500 text-xs mb-2 line-clamp-2">${p.abstract || 'Tidak ada abstrak.'}</p>
+            ${p.url ? `<a href="${p.url}" target="_blank" class="text-sky-400 text-xs hover:underline">Lihat Paper →</a>` : ''}
+          </div>
+        `).join('')}
+      `;
+    }
+
+    async function suggestMethodology() {
+      const judul = document.getElementById('methQuery').value.trim();
+      if (!judul) { showToast('Masukkan judul skripsi!', 'error'); return; }
+      setLoading('methBtnText', 'methSpinner', true);
+      try {
+        const res = await fetch('/api/suggest-methodology', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({judul})
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+        renderMethodology(data.methodology);
+      } catch(e) {
+        showToast('Error: ' + e.message, 'error');
+      } finally {
+        setLoading('methBtnText', 'methSpinner', false);
+      }
+    }
+
+    function renderMethodology(m) {
+      document.getElementById('methodology-results').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="card p-4">
+            <p class="text-xs text-slate-400 mb-2">Jenis Penelitian</p>
+            <p class="text-white font-semibold">${m.jenis_penelitian}</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-xs text-slate-400 mb-2">Metodologi Utama</p>
+            <p class="text-white font-semibold">${m.metodologi_utama}</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-xs text-slate-400 mb-2">Estimasi Waktu</p>
+            <p class="text-white font-semibold">${m.estimasi_waktu}</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-xs text-slate-400 mb-2">Dataset / Sumber Data</p>
+            <p class="text-white text-sm">${m.dataset_saran}</p>
+          </div>
+          <div class="card p-4 md:col-span-2">
+            <p class="text-xs text-slate-400 mb-2">Langkah Penelitian</p>
+            <ol class="list-decimal list-inside space-y-1">
+              ${m.langkah_penelitian?.map(l => `<li class="text-slate-300 text-sm">${l}</li>`).join('') || ''}
+            </ol>
+          </div>
+          <div class="card p-4">
+            <p class="text-xs text-slate-400 mb-2">Tools & Teknologi</p>
+            <div class="flex flex-wrap gap-2">
+              ${m.tools_teknologi?.map(t => `<span class="badge" style="background:#818cf820;color:#818cf8">${t}</span>`).join('') || ''}
+            </div>
+          </div>
+          <div class="card p-4">
+            <p class="text-xs text-slate-400 mb-2">Referensi Metode</p>
+            <ul class="space-y-1">
+              ${m.referensi_metode?.map(r => `<li class="text-slate-300 text-xs">• ${r}</li>`).join('') || ''}
+            </ul>
+          </div>
+          <div class="card p-4 md:col-span-2" style="border-color:#fbbf2440">
+            <p class="text-xs text-yellow-400 mb-1">💡 Tips dari Pembimbing</p>
+            <p class="text-slate-300 text-sm">${m.tips}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    async function generateOutline() {
+      const judul = document.getElementById('outlineQuery').value.trim();
+      if (!judul) { showToast('Masukkan judul skripsi!', 'error'); return; }
+      setLoading('outBtnText', 'outSpinner', true);
+      try {
+        const res = await fetch('/api/generate-outline', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({judul})
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+        renderOutline(data.outline, judul);
+      } catch(e) {
+        showToast('Error: ' + e.message, 'error');
+      } finally {
+        setLoading('outBtnText', 'outSpinner', false);
+      }
+    }
+
+    function renderOutline(o, judul) {
+      document.getElementById('outline-results').innerHTML = `
+        <div class="card p-5 mb-4" style="border-color:#38bdf840">
+          <p class="text-xs text-sky-400 mb-1">BAB I — PENDAHULUAN</p>
+          <p class="text-white font-bold mb-4">${judul}</p>
+
+          <div class="mb-4">
+            <p class="text-xs text-slate-400 mb-1 font-semibold">1.1 Latar Belakang</p>
+            <p class="text-slate-300 text-sm leading-relaxed">${o.latar_belakang}</p>
+          </div>
+
+          <div class="mb-4">
+            <p class="text-xs text-slate-400 mb-1 font-semibold">1.2 Rumusan Masalah</p>
+            <ol class="list-decimal list-inside space-y-1">
+              ${o.rumusan_masalah?.map(r => `<li class="text-slate-300 text-sm">${r}</li>`).join('') || ''}
+            </ol>
+          </div>
+
+          <div class="mb-4">
+            <p class="text-xs text-slate-400 mb-1 font-semibold">1.3 Tujuan Penelitian</p>
+            <ol class="list-decimal list-inside space-y-1">
+              ${o.tujuan_penelitian?.map(t => `<li class="text-slate-300 text-sm">${t}</li>`).join('') || ''}
+            </ol>
+          </div>
+
+          <div class="mb-4">
+            <p class="text-xs text-slate-400 mb-1 font-semibold">1.4 Manfaat Penelitian</p>
+            <p class="text-slate-300 text-sm"><span class="text-slate-400">Teoritis:</span> ${o.manfaat_penelitian?.teoritis}</p>
+            <p class="text-slate-300 text-sm mt-1"><span class="text-slate-400">Praktis:</span> ${o.manfaat_penelitian?.praktis}</p>
+          </div>
+
+          <div class="mb-4">
+            <p class="text-xs text-slate-400 mb-1 font-semibold">1.5 Batasan Masalah</p>
+            <ol class="list-decimal list-inside space-y-1">
+              ${o.batasan_masalah?.map(b => `<li class="text-slate-300 text-sm">${b}</li>`).join('') || ''}
+            </ol>
+          </div>
+
+          <div>
+            <p class="text-xs text-slate-400 mb-1 font-semibold">1.6 Sistematika Penulisan</p>
+            <ul class="space-y-1">
+              ${o.sistematika_penulisan?.map(s => `<li class="text-slate-300 text-sm">• ${s}</li>`).join('') || ''}
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    function switchTabDirect(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector(`.tab[onclick="switchTab('${tab}')"]`)?.classList.add('active');
+      document.getElementById(`panel-${tab}`).classList.add('active');
+    }
+
+    function showToast(msg, type = 'info') {
+      const t = document.createElement('div');
+      t.style.cssText = `position:fixed;bottom:1.5rem;right:1.5rem;padding:0.75rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;z-index:9999;max-width:320px;`;
+      t.style.background = type === 'error' ? '#7f1d1d' : '#1e3a5f';
+      t.style.color = type === 'error' ? '#fca5a5' : '#7dd3fc';
+      t.style.border = `1px solid ${type === 'error' ? '#991b1b' : '#1e40af'}`;
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3500);
+    }
+  </script>
+</body>
+</html>

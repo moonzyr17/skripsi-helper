@@ -1,0 +1,191 @@
+#!/usr/bin/env python3
+"""
+Skripsi Helper — AI-powered skripsi title generator & research helper
+untuk mahasiswa informatika menggunakan Groq API.
+"""
+
+import os
+import json
+import requests
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
+
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+
+SEMANTIC_SCHOLAR_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
+
+
+def groq_chat(messages: list, max_tokens: int = 1024) -> str:
+    """Call Groq API and return response text."""
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": GROQ_MODEL,
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": 0.8,
+    }
+    res = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=30)
+    res.raise_for_status()
+    return res.json()["choices"][0]["message"]["content"].strip()
+
+
+def search_semantic_scholar(query: str, limit: int = 5) -> list:
+    """Search existing papers on Semantic Scholar."""
+    params = {
+        "query": query,
+        "limit": limit,
+        "fields": "title,authors,year,abstract,url",
+    }
+    try:
+        res = requests.get(SEMANTIC_SCHOLAR_URL, params=params, timeout=10)
+        res.raise_for_status()
+        data = res.json()
+        return data.get("data", [])
+    except Exception:
+        return []
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/api/generate-titles", methods=["POST"])
+def generate_titles():
+    """Generate skripsi title suggestions."""
+    body = request.get_json()
+    bidang = body.get("bidang", "")
+    keywords = body.get("keywords", "")
+    metode = body.get("metode", "")
+    level = body.get("level", "S1")
+
+    prompt = f"""Kamu adalah asisten akademik untuk mahasiswa informatika Indonesia.
+Tugasmu adalah menghasilkan 5 judul skripsi yang kreatif, spesifik, dan layak untuk diteliti.
+
+Informasi dari mahasiswa:
+- Bidang/topik: {bidang}
+- Kata kunci: {keywords}
+- Metode yang diminati: {metode if metode else "bebas"}
+- Jenjang: {level}
+
+Aturan judul yang baik:
+1. Spesifik dan tidak terlalu umum
+2. Mengandung objek penelitian yang jelas
+3. Mengandung metode atau pendekatan
+4. Bahasa Indonesia yang baku
+5. Panjang 10-20 kata
+
+Format output (JSON array):
+[
+  {{
+    "judul": "judul skripsi lengkap",
+    "metode": "metode utama yang digunakan",
+    "bidang": "sub-bidang informatika",
+    "tingkat_kesulitan": "Mudah/Sedang/Sulit",
+    "alasan": "kenapa judul ini menarik dan layak diteliti (1-2 kalimat)"
+  }}
+]
+
+Hanya output JSON, tidak ada teks lain."""
+
+    try:
+        result = groq_chat([{"role": "user", "content": prompt}], max_tokens=2048)
+        # Extract JSON from response
+        start = result.find("[")
+        end = result.rfind("]") + 1
+        if start == -1 or end == 0:
+            return jsonify({"success": False, "message": "Format response tidak valid"}), 500
+        titles = json.loads(result[start:end])
+        return jsonify({"success": True, "titles": titles})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route("/api/check-research", methods=["POST"])
+def check_research():
+    """Check existing research on Semantic Scholar."""
+    body = request.get_json()
+    judul = body.get("judul", "")
+    papers = search_semantic_scholar(judul, limit=5)
+    return jsonify({"success": True, "papers": papers})
+
+
+@app.route("/api/suggest-methodology", methods=["POST"])
+def suggest_methodology():
+    """Suggest research methodology based on title."""
+    body = request.get_json()
+    judul = body.get("judul", "")
+
+    prompt = f"""Kamu adalah dosen pembimbing skripsi informatika di Indonesia.
+Berikan saran metodologi penelitian yang detail untuk judul skripsi berikut:
+
+Judul: "{judul}"
+
+Berikan output dalam format JSON:
+{{
+  "jenis_penelitian": "...",
+  "metodologi_utama": "...",
+  "langkah_penelitian": ["langkah 1", "langkah 2", "langkah 3", "langkah 4", "langkah 5"],
+  "tools_teknologi": ["tool1", "tool2", "tool3"],
+  "dataset_saran": "...",
+  "estimasi_waktu": "... bulan",
+  "referensi_metode": ["paper/buku referensi 1", "paper/buku referensi 2"],
+  "tips": "saran singkat untuk mahasiswa"
+}}
+
+Hanya output JSON, tidak ada teks lain."""
+
+    try:
+        result = groq_chat([{"role": "user", "content": prompt}], max_tokens=1024)
+        start = result.find("{")
+        end = result.rfind("}") + 1
+        methodology = json.loads(result[start:end])
+        return jsonify({"success": True, "methodology": methodology})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route("/api/generate-outline", methods=["POST"])
+def generate_outline():
+    """Generate BAB 1 outline based on title."""
+    body = request.get_json()
+    judul = body.get("judul", "")
+
+    prompt = f"""Kamu adalah dosen pembimbing skripsi informatika di Indonesia.
+Buatkan outline BAB 1 (Pendahuluan) yang lengkap untuk skripsi dengan judul:
+
+"{judul}"
+
+Format output JSON:
+{{
+  "latar_belakang": "paragraf latar belakang masalah (3-4 kalimat)",
+  "rumusan_masalah": ["rumusan masalah 1", "rumusan masalah 2", "rumusan masalah 3"],
+  "tujuan_penelitian": ["tujuan 1", "tujuan 2", "tujuan 3"],
+  "manfaat_penelitian": {{
+    "teoritis": "manfaat teoritis",
+    "praktis": "manfaat praktis"
+  }},
+  "batasan_masalah": ["batasan 1", "batasan 2", "batasan 3"],
+  "sistematika_penulisan": ["BAB I: ...", "BAB II: ...", "BAB III: ...", "BAB IV: ...", "BAB V: ..."]
+}}
+
+Hanya output JSON, tidak ada teks lain."""
+
+    try:
+        result = groq_chat([{"role": "user", "content": prompt}], max_tokens=1500)
+        start = result.find("{")
+        end = result.rfind("}") + 1
+        outline = json.loads(result[start:end])
+        return jsonify({"success": True, "outline": outline})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)
