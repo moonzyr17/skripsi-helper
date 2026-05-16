@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Skripsi Helper — AI-powered skripsi title generator & research helper
-untuk mahasiswa informatika menggunakan Groq API.
+untuk mahasiswa Indonesia dari berbagai jurusan menggunakan Groq API.
 """
 
 import os

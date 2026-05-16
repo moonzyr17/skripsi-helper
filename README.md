@@ -14,6 +14,7 @@ AI-powered research assistant untuk membantu mahasiswa Indonesia dari semua juru
 - **🔍 Cek Riset** — Cek penelitian serupa di Semantic Scholar
 - **🔬 Saran Metodologi** — Rekomendasi metode, tools, dataset, dan estimasi waktu
 - **📝 Outline BAB 1** — Generate latar belakang, rumusan masalah, tujuan, batasan otomatis
+- **📄 Download Template BAB 1** — Export outline BAB 1 ke file `.docx` siap edit dengan format akademik
 
 ## 🎓 Cocok untuk Semua Jurusan
 
@@ -50,6 +51,7 @@ Buka `http://localhost:5000`
 | `/api/check-research` | POST | Cek penelitian di Semantic Scholar |
 | `/api/suggest-methodology` | POST | Saran metodologi |
 | `/api/generate-outline` | POST | Generate outline BAB 1 |
+| `/api/download-outline` | POST | Download template BAB 1 dalam format DOCX |
 
 ## 🤖 Tech Stack
 
