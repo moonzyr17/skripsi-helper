@@ -1,124 +1,721 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skripsi Helper — Research Title Assistant</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    *{font-family:Inter,system-ui,sans-serif} body{background:radial-gradient(circle at 12% 0%,#e0f2fe 0,#f8fafc 30%,#f8fafc 100%);color:#18181b}.shell{max-width:1120px;margin:0 auto}.panel{background:rgba(255,255,255,.86);backdrop-filter:blur(18px);border:1px solid rgba(228,228,231,.9);border-radius:26px;box-shadow:0 22px 70px rgba(15,23,42,.09)}.soft{background:linear-gradient(180deg,#fff,#fafafa);border:1px solid #e4e4e7;border-radius:18px}.input{width:100%;border:1px solid #d4d4d8;background:#fff;border-radius:14px;padding:.86rem 1rem;font-size:.92rem;outline:none}.input:focus{border-color:#0f172a;box-shadow:0 0 0 5px rgba(14,165,233,.12)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border-radius:14px;padding:.82rem 1.05rem;font-weight:800;font-size:.9rem;transition:.15s;white-space:nowrap}.btn:disabled{opacity:.55}.btn-dark{background:linear-gradient(135deg,#0f172a,#2563eb);color:white;box-shadow:0 10px 24px rgba(37,99,235,.22)}.btn-dark:hover{filter:brightness(1.06);transform:translateY(-1px)}.btn-light{background:#fff;border:1px solid #d4d4d8;color:#27272a}.btn-light:hover{background:#f4f4f5;transform:translateY(-1px)}.step{display:flex;align-items:center;gap:.65rem;padding:.75rem 1rem;border-radius:14px;color:#71717a;font-weight:700;font-size:.86rem;border:1px solid transparent;cursor:pointer}.step.active{background:#18181b;color:#fff}.step.ready{background:#fff;border-color:#e4e4e7;color:#27272a}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:.22rem .62rem;font-size:.72rem;font-weight:800}.easy{background:#dcfce7;color:#166534}.medium{background:#fef3c7;color:#92400e}.hard{background:#fee2e2;color:#991b1b}.neutral{background:#f4f4f5;color:#52525b}.title-card{background:white;border:1px solid #e4e4e7;border-radius:18px;padding:1.1rem;transition:.15s}.title-card:hover{border-color:#a1a1aa;box-shadow:0 10px 28px rgba(24,24,27,.06)}.hidden-panel{display:none}.hidden-panel.active{display:block}.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:#18181b;color:#fff;padding:.9rem 1.05rem;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.22);z-index:99;font-size:.9rem;max-width:92vw}.paper{background:#fff;border:1px solid #e4e4e7;border-radius:16px;padding:1rem}.label{font-size:.72rem;font-weight:800;color:#71717a;text-transform:uppercase;letter-spacing:.06em}.value{font-size:.93rem;color:#3f3f46;line-height:1.65}@media(max-width:720px){.hero-title{font-size:2rem}.steps{display:grid;grid-template-columns:1fr 1fr}.step{font-size:.78rem;padding:.65rem}.panel{border-radius:18px}.mobile-stack{flex-direction:column}.mobile-stack>*{width:100%}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skripsi Helper — App</title>
+<meta name="theme-color" content="#FAFAF7">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper: '#FAFAF7',
+          paper2: '#F1EEE6',
+          ink: '#1B1B1B',
+          ink2: '#3D3A36',
+          muted: '#6B665F',
+          accent: '#C2410C',
+          accent2: '#7C3F1A',
+          mark: '#FDE68A',
+          ok: '#15803D',
+          okSoft: '#DCFCE7',
+          warn: '#B45309',
+          warnSoft: '#FEF3C7',
+          bad: '#B91C1C',
+          badSoft: '#FEE2E2',
+        },
+        fontFamily: {
+          serif: ['"Crimson Pro"', 'ui-serif', 'Georgia'],
+          sans: ['"Atkinson Hyperlegible"', 'ui-sans-serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace'],
+          display: ['"Crimson Pro"', 'ui-serif'],
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { background: #FAFAF7; color: #1B1B1B; font-family: 'Atkinson Hyperlegible', system-ui; }
+  .display { font-family: 'Crimson Pro', ui-serif; letter-spacing: -0.01em; }
+  .num { font-feature-settings: "tnum" 1; font-variant-numeric: tabular-nums; }
+  .smallcaps { font-variant: small-caps; letter-spacing: 0.08em; }
+  .rule-bot { border-bottom: 2px solid #1B1B1B; }
+  .rule-thin { border: 1px solid #1B1B1B; }
+  .rule-thin-bot { border-bottom: 1px solid #1B1B1B; }
+  .input {
+    width: 100%; background: #FAFAF7;
+    border: 1.5px solid #1B1B1B;
+    padding: 0.7rem 0.85rem; font-size: 0.92rem;
+    font-family: 'Atkinson Hyperlegible', system-ui;
+    outline: none; transition: box-shadow 150ms;
+  }
+  .input:focus { box-shadow: 4px 4px 0 #C2410C; }
+  .label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: #6B665F; margin-bottom: 6px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+    padding: 0.7rem 1.05rem; font-weight: 700; font-size: 0.9rem;
+    transition: background 150ms, transform 80ms, color 150ms;
+    border: 2px solid #1B1B1B;
+    cursor: pointer;
+  }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .btn-primary { background: #1B1B1B; color: #FAFAF7; }
+  .btn-primary:not(:disabled):hover { background: #C2410C; border-color: #C2410C; }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-ghost { background: transparent; color: #1B1B1B; }
+  .btn-ghost:hover { background: #1B1B1B; color: #FAFAF7; }
+  .btn-accent { background: #C2410C; color: #FAFAF7; border-color: #C2410C; }
+  .btn-accent:hover { background: #7C3F1A; border-color: #7C3F1A; }
+
+  .card {
+    border: 1.5px solid #1B1B1B; background: #FAFAF7;
+    transition: transform 150ms, box-shadow 150ms;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 5px 5px 0 #1B1B1B; }
+  .panel { border: 1.5px solid #1B1B1B; background: #FAFAF7; }
+  .step {
+    flex: 1 1 auto; min-width: 0;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    border: 1.5px solid #1B1B1B;
+    background: #FAFAF7; color: #1B1B1B;
+    transition: background 150ms, color 150ms;
+    cursor: pointer; white-space: nowrap;
+  }
+  .step.active { background: #1B1B1B; color: #FAFAF7; }
+  .step.done { background: #C2410C; color: #FAFAF7; border-color: #C2410C; }
+  .hidden-panel { display: none; }
+  .hidden-panel.active { display: block; }
+  .badge {
+    display: inline-flex; align-items: center;
+    border: 1.5px solid #1B1B1B; border-radius: 999px;
+    padding: 2px 9px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: #FAFAF7; color: #1B1B1B;
+  }
+  .badge.easy { background: #DCFCE7; border-color: #15803D; color: #14532D; }
+  .badge.medium { background: #FEF3C7; border-color: #B45309; color: #78350F; }
+  .badge.hard { background: #FEE2E2; border-color: #B91C1C; color: #7F1D1D; }
+  .badge.neutral { background: #F1EEE6; }
+  .marker { background: linear-gradient(180deg, transparent 60%, #FDE68A 60%); padding: 0 2px; }
+
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid currentColor; border-right-color: transparent;
+    border-radius: 999px; display: inline-block;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1B1B1B; color: #FAFAF7;
+    padding: 0.7rem 1.1rem; font-size: 0.9rem; font-weight: 600;
+    border: 1.5px solid #C2410C; box-shadow: 4px 4px 0 #C2410C;
+    z-index: 99; animation: toast 2.8s ease;
+  }
+  @keyframes toast {
+    0% { opacity: 0; transform: translate(-50%, 12px); }
+    10%, 85% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -8px); }
+  }
+
+  .num-bullet {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: #1B1B1B; color: #FAFAF7;
+    font-family: 'Crimson Pro', ui-serif; font-weight: 800;
+    font-size: 14px; flex-shrink: 0;
+  }
+
+  :focus-visible { outline: 2px solid #C2410C; outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .btn, .step { transition: none; }
+    .spinner { animation: none; }
+  }
+  @media (max-width: 640px) {
+    .mobile-stack { flex-direction: column; align-items: stretch; }
+    .mobile-stack > * { width: 100%; }
+  }
+</style>
 </head>
-<body>
-  <header class="bg-white/80 backdrop-blur border-b border-zinc-200 sticky top-0 z-20">
-    <div class="shell px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-zinc-900 text-white grid place-items-center font-black">S</div>
-        <div><div class="font-extrabold text-zinc-900">Skripsi Helper</div><div class="text-xs text-zinc-500">AI research assistant untuk semua jurusan</div></div>
+<body class="min-h-screen">
+
+<!-- MASTHEAD -->
+<header class="rule-bot sticky top-0 z-30 bg-paper/95 backdrop-blur">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+    <a href="/" class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-ink text-paper flex items-center justify-center display text-xl font-black">S</div>
+      <div class="leading-tight">
+        <p class="display text-sm font-bold">Skripsi Helper</p>
+        <p class="text-[10px] muted smallcaps">App / Workflow</p>
       </div>
-      <a href="https://github.com/moonzyr17/skripsi-helper" target="_blank" class="btn btn-light py-2 hidden sm:inline-flex">GitHub</a>
+    </a>
+    <nav class="flex items-center gap-2">
+      <a href="/" class="text-xs sm:text-sm muted hover:text-ink transition">← Landing</a>
+      <a href="https://github.com/moonzyr17/skripsi-helper" target="_blank" rel="noopener" class="btn btn-ghost py-1.5 text-xs">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.04c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.69 1.25 3.34.96.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18.91-.25 1.89-.38 2.86-.38.97 0 1.95.13 2.86.38 2.18-1.49 3.14-1.18 3.14-1.18.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.25 5.65.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.55C20.21 21.39 23.5 17.07 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        <span class="hidden sm:inline">Source</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-[1120px] mx-auto px-4 sm:px-6 py-7 sm:py-10">
+
+  <!-- INTRO + INPUT -->
+  <section class="grid lg:grid-cols-[1.1fr_1fr] gap-6 items-start mb-8">
+    <div>
+      <span class="badge mb-4">Untuk D3, S1, dan S2</span>
+      <h1 class="display text-4xl sm:text-5xl md:text-6xl font-black leading-[0.95] mb-4">
+        Cari judul skripsi<br><span class="italic">jadi lebih gampang.</span>
+      </h1>
+      <p class="muted leading-relaxed mb-5 text-base">
+        Generate 10 judul, pilih satu, lalu lanjut <span class="marker font-bold">cek riset terdahulu</span>, <span class="marker font-bold">saran metodologi</span>, dan <span class="marker font-bold">outline BAB I</span>. Cocok untuk berbagai jurusan.
+      </p>
+      <div class="grid grid-cols-3 gap-0 rule-thin">
+        <div class="p-3 sm:p-4 border-r border-ink">
+          <p class="display text-3xl font-black text-accent num">10</p>
+          <p class="text-[10px] smallcaps muted mt-1">Judul / klik</p>
+        </div>
+        <div class="p-3 sm:p-4 border-r border-ink">
+          <p class="display text-3xl font-black num">4</p>
+          <p class="text-[10px] smallcaps muted mt-1">Fitur terhubung</p>
+        </div>
+        <div class="p-3 sm:p-4">
+          <p class="display text-3xl font-black num">DOCX</p>
+          <p class="text-[10px] smallcaps muted mt-1">Outline siap</p>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <main class="shell px-4 py-8 md:py-12">
-    <section class="grid lg:grid-cols-[1.05fr_.95fr] gap-6 items-start mb-8">
-      <div class="panel p-6 md:p-8">
-        <span class="badge neutral mb-4">Untuk D3, S1, dan S2</span>
-        <h1 class="hero-title text-4xl md:text-5xl font-black tracking-tight text-zinc-950 mb-4">Cari judul skripsi jadi lebih gampang.</h1>
-        <p class="text-zinc-600 leading-relaxed mb-6">Generate 10 judul, pilih satu, lalu lanjut cek riset terdahulu, saran metodologi, dan outline BAB 1. Cocok untuk berbagai jurusan seperti Hukum, Ekonomi, Kesehatan, Teknik, Sosial, Pendidikan, dan lainnya.</p>
-        <div class="grid sm:grid-cols-3 gap-3 text-sm">
-          <div class="soft p-4"><b>10</b><br><span class="text-zinc-500">judul sekali generate</span></div>
-          <div class="soft p-4"><b>4 fitur</b><br><span class="text-zinc-500">dalam satu workflow</span></div>
-          <div class="soft p-4"><b>Llama 3.3</b><br><span class="text-zinc-500">via Groq + Scholar</span></div>
+    <!-- INPUT FORM -->
+    <div class="panel p-5 sm:p-6">
+      <p class="text-xs smallcaps muted mb-1">Step 01</p>
+      <h2 class="display text-2xl font-bold mb-1">Mulai dari topikmu</h2>
+      <p class="text-sm muted mb-5">Isi minimal bidang dan kata kunci.</p>
+      <div class="space-y-4">
+        <div>
+          <label class="label" for="bidang">Bidang / Jurusan *</label>
+          <input id="bidang" class="input" placeholder="Contoh: Akuntansi, Hukum, Keperawatan">
+        </div>
+        <div>
+          <label class="label" for="keywords">Kata Kunci / Topik *</label>
+          <input id="keywords" class="input" placeholder="Contoh: audit, kontrak digital, stunting">
+        </div>
+        <div>
+          <label class="label" for="metode">Metode / Pendekatan</label>
+          <input id="metode" class="input" placeholder="Opsional: kualitatif, regresi, studi kasus">
+        </div>
+        <div>
+          <label class="label" for="level">Jenjang</label>
+          <select id="level" class="input">
+            <option>S1</option><option>S2</option><option>D3</option>
+          </select>
+        </div>
+        <div class="flex gap-3 mobile-stack pt-1">
+          <button id="genBtn" class="btn btn-primary flex-1" onclick="generateTitles()">
+            <span id="genSpin" class="spinner hidden"></span>
+            <span id="genText">Generate 10 Judul →</span>
+          </button>
+          <button class="btn btn-ghost" onclick="clearAll()">Reset</button>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="panel p-5 md:p-6">
-        <h2 class="font-black text-xl mb-1">Mulai dari topikmu</h2>
-        <p class="text-sm text-zinc-500 mb-5">Isi minimal bidang dan kata kunci.</p>
-        <div class="space-y-4">
-          <div><label class="label block mb-1.5">Bidang / Jurusan *</label><input id="bidang" class="input" placeholder="Contoh: Akuntansi, Hukum, Keperawatan" /></div>
-          <div><label class="label block mb-1.5">Kata Kunci / Topik *</label><input id="keywords" class="input" placeholder="Contoh: audit, kontrak digital, stunting" /></div>
-          <div><label class="label block mb-1.5">Metode / Pendekatan</label><input id="metode" class="input" placeholder="Opsional: kualitatif, regresi, studi kasus" /></div>
-          <div><label class="label block mb-1.5">Jenjang</label><select id="level" class="input"><option>S1</option><option>S2</option><option>D3</option></select></div>
-          <div class="flex gap-3 mobile-stack"><button id="genBtn" class="btn btn-dark flex-1" onclick="generateTitles()"><span id="genSpin" class="spinner hidden"></span><span id="genText">Generate 10 Judul</span></button><button class="btn btn-light" onclick="clearAll()">Reset</button></div>
+  <!-- WORKSPACE -->
+  <section id="workspace" class="hidden">
+    <!-- Step indicator -->
+    <div class="panel p-4 sm:p-5 mb-5">
+      <p class="text-xs smallcaps muted mb-3">Workflow</p>
+      <div class="flex gap-0 -ml-px overflow-x-auto" id="stepBar">
+        <button class="step active" onclick="openPanel('titles', this)">01 · Pilih Judul</button>
+        <button class="step" onclick="openPanel('research', this)">02 · Cek Riset</button>
+        <button class="step" onclick="openPanel('methodology', this)">03 · Metodologi</button>
+        <button class="step" onclick="openPanel('outline', this)">04 · Outline BAB I</button>
+      </div>
+
+      <div id="selectedBox" class="hidden mt-5 pt-5 border-t border-ink">
+        <p class="text-xs smallcaps muted mb-2">Judul terpilih</p>
+        <p id="selectedTitle" class="display text-lg sm:text-xl font-bold leading-snug mb-4 italic"></p>
+        <div class="flex gap-2 flex-wrap">
+          <button data-mini-tab="research" class="btn btn-ghost py-2 text-xs" onclick="openByName('research')">→ Cek Riset</button>
+          <button data-mini-tab="methodology" class="btn btn-ghost py-2 text-xs" onclick="openByName('methodology')">→ Saran Metodologi</button>
+          <button data-mini-tab="outline" class="btn btn-ghost py-2 text-xs" onclick="openByName('outline')">→ Outline BAB I</button>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section id="workspace" class="hidden">
-      <div class="panel p-4 md:p-5 mb-5">
-        <div class="steps flex gap-2 overflow-x-auto">
-          <button class="step active" onclick="openPanel('titles',this)">1. Pilih Judul</button>
-          <button class="step ready" onclick="openPanel('research',this)">2. Cek Riset</button>
-          <button class="step ready" onclick="openPanel('methodology',this)">3. Metodologi</button>
-          <button class="step ready" onclick="openPanel('outline',this)">4. Outline BAB 1</button>
+    <!-- Panel: Titles -->
+    <div id="panel-titles" class="hidden-panel active">
+      <div id="titles-list" class="grid sm:grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- Panel: Research -->
+    <div id="panel-research" class="hidden-panel">
+      <div class="panel p-5 sm:p-6 mb-5">
+        <p class="text-xs smallcaps muted mb-1">Step 02</p>
+        <h3 class="display text-2xl sm:text-3xl font-bold mb-2">Cek riset terdahulu</h3>
+        <p class="muted text-sm mb-5">Cari paper yang mirip di Semantic Scholar (fallback Crossref). Pastikan masih ada celah riset buat lo.</p>
+        <div class="flex gap-3 mobile-stack">
+          <input id="researchQuery" class="input flex-1" placeholder="Judul otomatis masuk setelah dipilih">
+          <select id="researchSort" class="input sm:max-w-[180px]" onchange="sortCurrentResearch()">
+            <option value="newest">Tahun terbaru</option>
+            <option value="oldest">Tahun terlama</option>
+            <option value="relevance">Relevansi</option>
+          </select>
+          <button class="btn btn-primary" onclick="checkResearch()">
+            <span id="resSpin" class="spinner hidden"></span>
+            <span id="resText">Cek Riset</span>
+          </button>
         </div>
-        <div id="selectedBox" class="hidden mt-4 soft p-4">
-          <div class="label mb-1">Judul terpilih</div>
-          <div id="selectedTitle" class="font-bold text-zinc-900 text-sm leading-relaxed"></div>
-          <div class="flex gap-2 flex-wrap mt-3">
-            <button data-mini-tab="research" class="btn btn-light py-2" onclick="openByName('research')">Cek Riset</button>
-            <button data-mini-tab="methodology" class="btn btn-light py-2" onclick="openByName('methodology')">Saran Metodologi</button>
-            <button data-mini-tab="outline" class="btn btn-light py-2" onclick="openByName('outline')">Outline BAB 1</button>
-          </div>
+      </div>
+      <div id="research-results" class="space-y-3"></div>
+    </div>
+
+    <!-- Panel: Methodology -->
+    <div id="panel-methodology" class="hidden-panel">
+      <div class="panel p-5 sm:p-6 mb-5">
+        <p class="text-xs smallcaps muted mb-1">Step 03</p>
+        <h3 class="display text-2xl sm:text-3xl font-bold mb-2">Saran metodologi</h3>
+        <p class="muted text-sm mb-5">Rekomendasi jenis penelitian, langkah, tools, dataset, dan estimasi waktu.</p>
+        <div class="flex gap-3 mobile-stack">
+          <input id="methQuery" class="input flex-1" placeholder="Judul otomatis masuk setelah dipilih">
+          <button class="btn btn-primary" onclick="suggestMethodology()">
+            <span id="methSpin" class="spinner hidden"></span>
+            <span id="methText">Analisis</span>
+          </button>
         </div>
       </div>
+      <div id="methodology-results"></div>
+    </div>
 
-      <div id="panel-titles" class="hidden-panel active"><div id="titles-list" class="grid gap-3"></div></div>
-
-      <div id="panel-research" class="hidden-panel">
-        <div class="panel p-5 mb-4"><h3 class="font-black text-xl mb-2">Cek riset terdahulu</h3><p class="text-zinc-500 text-sm mb-4">Cari paper yang mirip di Semantic Scholar, lalu urutkan berdasarkan tahun.</p><div class="flex gap-3 mobile-stack"><input id="researchQuery" class="input" placeholder="Judul otomatis masuk setelah dipilih"/><select id="researchSort" class="input md:max-w-[190px]" onchange="sortCurrentResearch()"><option value="newest">Tahun terbaru</option><option value="oldest">Tahun terlama</option><option value="relevance">Relevansi</option></select><button class="btn btn-dark" onclick="checkResearch()"><span id="resSpin" class="spinner hidden"></span><span id="resText">Cek Riset</span></button></div></div><div id="research-results" class="grid gap-3"></div>
+    <!-- Panel: Outline -->
+    <div id="panel-outline" class="hidden-panel">
+      <div class="panel p-5 sm:p-6 mb-5">
+        <p class="text-xs smallcaps muted mb-1">Step 04</p>
+        <h3 class="display text-2xl sm:text-3xl font-bold mb-2">Outline BAB I</h3>
+        <p class="muted text-sm mb-5">Generate draft pendahuluan: latar belakang, rumusan masalah, tujuan, manfaat, batasan, sistematika.</p>
+        <div class="flex gap-3 mobile-stack">
+          <input id="outlineQuery" class="input flex-1" placeholder="Judul otomatis masuk setelah dipilih">
+          <button class="btn btn-primary" onclick="generateOutline()">
+            <span id="outSpin" class="spinner hidden"></span>
+            <span id="outText">Generate Outline</span>
+          </button>
+        </div>
       </div>
+      <div id="outline-results"></div>
+    </div>
+  </section>
 
-      <div id="panel-methodology" class="hidden-panel">
-        <div class="panel p-5 mb-4"><h3 class="font-black text-xl mb-2">Saran metodologi</h3><p class="text-zinc-500 text-sm mb-4">Rekomendasi jenis penelitian, langkah, tools, dataset, dan estimasi waktu.</p><div class="flex gap-3 mobile-stack"><input id="methQuery" class="input" placeholder="Judul otomatis masuk setelah dipilih"/><button class="btn btn-dark" onclick="suggestMethodology()"><span id="methSpin" class="spinner hidden"></span><span id="methText">Analisis</span></button></div></div><div id="methodology-results"></div>
-      </div>
+</main>
 
-      <div id="panel-outline" class="hidden-panel">
-        <div class="panel p-5 mb-4"><h3 class="font-black text-xl mb-2">Outline BAB 1</h3><p class="text-zinc-500 text-sm mb-4">Generate draft pendahuluan: latar belakang, rumusan masalah, tujuan, manfaat, batasan, sistematika.</p><div class="flex gap-3 mobile-stack"><input id="outlineQuery" class="input" placeholder="Judul otomatis masuk setelah dipilih"/><button class="btn btn-dark" onclick="generateOutline()"><span id="outSpin" class="spinner hidden"></span><span id="outText">Generate Outline</span></button></div></div><div id="outline-results"></div>
-      </div>
-    </section>
-  </main>
+<footer class="rule-top mt-12">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 py-6 text-xs muted flex flex-wrap items-center justify-between gap-2">
+    <p class="smallcaps">© 2026 Skripsi Helper · Educational tool · Bukan pengganti diskusi pembimbing</p>
+    <a href="/" class="hover:text-ink transition">← Kembali ke landing</a>
+  </div>
+</footer>
 
 <script>
-const panels=['titles','research','methodology','outline'];
-let currentOutline=null;
-let currentOutlineTitle='';
-let currentResearchPapers=[];
-let currentResearchSource='';
-let currentResearchWarning='';
-window.addEventListener('pageshow',()=>{
-  // iOS/Safari can restore the previous workflow screen from back-forward cache.
-  // Always reopen this tool in a clean state so old research/methodology results disappear.
-  setTimeout(()=>{ try { clearAll(); window.scrollTo(0,0); } catch(e){} }, 0);
-});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&['bidang','keywords','metode'].includes(document.activeElement.id))generateTitles()});
-function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
-function setLoad(spin,text,on){document.getElementById(spin).classList.toggle('hidden',!on);document.getElementById(text).classList.toggle('hidden',on)}
-function clearPanelOutputs(){['researchQuery','methQuery','outlineQuery'].forEach(id=>{let e=document.getElementById(id);if(e)e.value=''});['research-results','methodology-results','outline-results'].forEach(id=>{let e=document.getElementById(id);if(e)e.innerHTML=''});currentOutline=null;currentOutlineTitle='';currentResearchPapers=[];currentResearchSource='';currentResearchWarning='';let s=document.getElementById('researchSort');if(s)s.value='newest'}
-function clearAll(){['bidang','keywords','metode'].forEach(id=>{let e=document.getElementById(id);if(e)e.value=''});clearPanelOutputs();let titles=document.getElementById('titles-list');if(titles)titles.innerHTML='';document.getElementById('workspace').classList.add('hidden');document.getElementById('selectedBox').classList.add('hidden');initStepButtons();syncMiniTabs('titles')}
-function syncMiniTabs(name){document.querySelectorAll('[data-mini-tab]').forEach(b=>{b.classList.remove('btn-dark');b.classList.add('btn-light')});let active=document.querySelector(`[data-mini-tab="${name}"]`);if(active){active.classList.remove('btn-light');active.classList.add('btn-dark')}}
-function openPanel(name,btn){document.querySelectorAll('.step').forEach(s=>{s.classList.remove('active');s.classList.add('ready')});if(btn){btn.classList.remove('ready');btn.classList.add('active')}document.querySelectorAll('.hidden-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');syncMiniTabs(name)} function initStepButtons(){document.querySelectorAll('.step').forEach((s,i)=>{if(i===0){s.classList.add('active');s.classList.remove('ready')}else{s.classList.add('ready');s.classList.remove('active')}})} initStepButtons(); if('ontouchstart' in window){document.querySelectorAll('.step').forEach((s,i)=>s.addEventListener('touchend',e=>{e.preventDefault();openByName(panels[i])},{passive:false}))} 
-function openByName(name){const idx=panels.indexOf(name);openPanel(name,document.querySelectorAll('.step')[idx]);document.getElementById('workspace').scrollIntoView({behavior:'smooth',block:'start'})}
-function badge(level){let c=level==='Mudah'?'easy':level==='Sulit'?'hard':'medium';return `<span class="badge ${c}">${level||'Sedang'}</span>`}
-function escapeAttr(s){return String(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;')}
-async function generateTitles(){let bidang=document.getElementById('bidang').value.trim(),keywords=document.getElementById('keywords').value.trim();if(!bidang||!keywords)return toast('Isi bidang dan kata kunci dulu.');setLoad('genSpin','genText',true);try{let r=await fetch('/api/generate-titles',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bidang,keywords,metode:document.getElementById('metode').value,level:document.getElementById('level').value})});let d=await r.json();if(!d.success)throw new Error(d.message);clearPanelOutputs();document.getElementById('selectedBox').classList.add('hidden');renderTitles(d.titles);document.getElementById('workspace').classList.remove('hidden');openByName('titles')}catch(e){toast('Error: '+e.message)}finally{setLoad('genSpin','genText',false)}}
-function renderTitles(titles){document.getElementById('titles-list').innerHTML=titles.map((t,i)=>`<article class="title-card"><div class="flex items-start justify-between gap-3 mb-3"><div class="text-zinc-400 font-black text-sm">${String(i+1).padStart(2,'0')}</div><div class="flex gap-2 flex-wrap justify-end">${badge(t.tingkat_kesulitan)}<span class="badge neutral">${t.bidang||'-'}</span></div></div><h3 class="font-black text-zinc-950 leading-snug mb-2">${t.judul}</h3><p class="text-sm text-zinc-500 mb-2"><b>Metode:</b> ${t.metode||'-'}</p><p class="text-sm text-zinc-600 leading-relaxed mb-4">${t.alasan||''}</p><button class="btn btn-dark py-2" onclick="useTitle('${escapeAttr(t.judul)}')">Pilih & lanjut analisis</button></article>`).join('')}
-function useTitle(judul){['researchQuery','methQuery','outlineQuery'].forEach(id=>document.getElementById(id).value=judul);document.getElementById('selectedTitle').textContent=judul;document.getElementById('selectedBox').classList.remove('hidden');toast('Judul dipilih. Tombol analisis sudah muncul di atas.');document.getElementById('selectedBox').scrollIntoView({behavior:'smooth',block:'center'})}
-async function checkResearch(){let q=document.getElementById('researchQuery').value.trim();if(!q)return toast('Pilih/isi judul dulu.');setLoad('resSpin','resText',true);try{let r=await fetch('/api/check-research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({judul:q})});let d=await r.json();currentResearchPapers=d.papers||[];currentResearchSource=d.source||'';currentResearchWarning=d.warning||'';renderResearch(currentResearchPapers,currentResearchSource,currentResearchWarning)}catch(e){toast('Error: '+e.message)}finally{setLoad('resSpin','resText',false)}}
-function getSortedResearch(p){let mode=(document.getElementById('researchSort')||{}).value||'newest';let arr=[...p];if(mode==='newest')arr.sort((a,b)=>(Number(b.year)||0)-(Number(a.year)||0));if(mode==='oldest')arr.sort((a,b)=>(Number(a.year)||9999)-(Number(b.year)||9999));return arr}
-function sortCurrentResearch(){if(currentResearchPapers.length)renderResearch(currentResearchPapers,currentResearchSource,currentResearchWarning)}
-function renderResearch(p,source,warning){let sorted=getSortedResearch(p);let mode=(document.getElementById('researchSort')||{}).value||'newest';let sortLabel=mode==='newest'?'tahun terbaru':mode==='oldest'?'tahun terlama':'relevansi';let warn=warning?`<div class="panel p-3 mb-3 text-sm text-amber-700 bg-amber-50 border border-amber-200">${warning}</div>`:'';let src=source?`<p class="text-xs text-zinc-500 mb-3">Sumber data: <b>${source}</b> · Diurutkan berdasarkan <b>${sortLabel}</b></p>`:'';document.getElementById('research-results').innerHTML=warn+src+(sorted.length?sorted.map(x=>`<div class="paper"><div class="flex items-start justify-between gap-3"><h4 class="font-black mb-1">${x.title||'-'}</h4><div class="flex gap-2 flex-wrap justify-end">${x.year?`<span class="badge neutral">${x.year}</span>`:''}${x.source?`<span class="badge neutral">${x.source}</span>`:''}</div></div><p class="text-xs text-zinc-500 mb-2">${(x.authors||[]).map(a=>a.name).join(', ')||'Unknown'} · ${x.year||'-'}</p><p class="value mb-2">${x.abstract||'Tidak ada abstrak.'}</p>${x.url?`<a class="font-bold text-sm underline" target="_blank" href="${x.url}">Lihat paper</a>`:''}</div>`).join(''):`<div class="panel p-6 text-center"><div class="text-3xl mb-2">✅</div><b>Tidak ditemukan penelitian serupa</b><p class="text-zinc-500 text-sm mt-1">Tidak ada hasil dari database paper yang dipakai, bukan berarti pasti belum pernah diteliti.</p></div>`)}
-async function suggestMethodology(){let q=document.getElementById('methQuery').value.trim();if(!q)return toast('Pilih/isi judul dulu.');setLoad('methSpin','methText',true);try{let r=await fetch('/api/suggest-methodology',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({judul:q})});let d=await r.json();if(!d.success)throw new Error(d.message);renderMethodology(d.methodology)}catch(e){toast('Error: '+e.message)}finally{setLoad('methSpin','methText',false)}}
-function renderMethodology(m){document.getElementById('methodology-results').innerHTML=`<div class="grid md:grid-cols-3 gap-3 mb-3"><div class="panel p-4"><div class="label">Jenis</div><div class="font-black">${m.jenis_penelitian}</div></div><div class="panel p-4"><div class="label">Metode</div><div class="font-black">${m.metodologi_utama}</div></div><div class="panel p-4"><div class="label">Estimasi</div><div class="font-black">${m.estimasi_waktu}</div></div></div><div class="grid md:grid-cols-2 gap-3"><div class="panel p-5"><div class="label mb-3">Langkah Penelitian</div><ol class="space-y-2">${(m.langkah_penelitian||[]).map((x,i)=>`<li class="value"><b>${i+1}.</b> ${x}</li>`).join('')}</ol></div><div class="space-y-3"><div class="panel p-5"><div class="label mb-2">Tools</div><div class="flex gap-2 flex-wrap">${(m.tools_teknologi||[]).map(x=>`<span class="badge neutral">${x}</span>`).join('')}</div></div><div class="panel p-5"><div class="label">Dataset</div><p class="value">${m.dataset_saran}</p></div><div class="panel p-5"><div class="label">Tips</div><p class="value">${m.tips}</p></div></div></div>`}
-async function generateOutline(){let q=document.getElementById('outlineQuery').value.trim();if(!q)return toast('Pilih/isi judul dulu.');setLoad('outSpin','outText',true);try{let r=await fetch('/api/generate-outline',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({judul:q})});let d=await r.json();if(!d.success)throw new Error(d.message);currentOutline=d.outline;currentOutlineTitle=q;renderOutline(d.outline,q)}catch(e){toast('Error: '+e.message)}finally{setLoad('outSpin','outText',false)}}
-function list(a){return `<ol class="space-y-2">${(a||[]).map((x,i)=>`<li class="value"><b>${i+1}.</b> ${x}</li>`).join('')}</ol>`}
-function section(t,c){return `<div class="mb-5"><h4 class="font-black mb-2">${t}</h4>${c}</div>`}
-function renderOutline(o,judul){document.getElementById('outline-results').innerHTML=`<div class="panel p-6"><div class="label">BAB I — Pendahuluan</div><h3 class="font-black text-xl mb-4">${judul}</h3><div class="soft p-4 mb-5 flex items-center justify-between gap-3 mobile-stack"><div><b>Download outline BAB 1</b><p class="text-zinc-500 text-sm">Format rapi: Times New Roman 12, margin normal, spacing 1.5, heading 1.1–1.6.</p></div><button class="btn btn-dark" onclick="downloadOutlineDocx()">Download .docx</button></div>${section('1.1 Latar Belakang',`<p class="value">${o.latar_belakang}</p>`)}${section('1.2 Rumusan Masalah',list(o.rumusan_masalah))}${section('1.3 Tujuan Penelitian',list(o.tujuan_penelitian))}${section('1.4 Manfaat Penelitian',`<p class="value"><b>Teoritis:</b> ${o.manfaat_penelitian?.teoritis||''}</p><p class="value"><b>Praktis:</b> ${o.manfaat_penelitian?.praktis||''}</p>`)}${section('1.5 Batasan Masalah',list(o.batasan_masalah))}${section('1.6 Sistematika Penulisan',list(o.sistematika_penulisan))}</div>`}
+const panels = ['titles', 'research', 'methodology', 'outline'];
+let currentOutline = null;
+let currentOutlineTitle = '';
+let currentResearchPapers = [];
+let currentResearchSource = '';
+let currentResearchWarning = '';
 
-async function downloadOutlineDocx(){if(!currentOutline||!currentOutlineTitle)return toast('Generate outline dulu sebelum download.');try{let r=await fetch('/api/download-outline',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({judul:currentOutlineTitle,outline:currentOutline})});if(!r.ok)throw new Error('Gagal membuat file DOCX');let blob=await r.blob();let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='bab-1-outline.docx';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast('File DOCX berhasil dibuat.')}catch(e){toast('Error: '+e.message)}}
+window.addEventListener('pageshow', () => {
+  setTimeout(() => { try { clearAll(); window.scrollTo(0, 0); } catch(e){} }, 0);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && ['bidang', 'keywords', 'metode'].includes(document.activeElement.id)) {
+    generateTitles();
+  }
+});
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+function setLoad(spin, text, on) {
+  document.getElementById(spin).classList.toggle('hidden', !on);
+  document.getElementById(text).classList.toggle('hidden', on);
+}
+
+function clearPanelOutputs() {
+  ['researchQuery', 'methQuery', 'outlineQuery'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.value = '';
+  });
+  ['research-results', 'methodology-results', 'outline-results'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.innerHTML = '';
+  });
+  currentOutline = null;
+  currentOutlineTitle = '';
+  currentResearchPapers = [];
+  currentResearchSource = '';
+  currentResearchWarning = '';
+  const s = document.getElementById('researchSort');
+  if (s) s.value = 'newest';
+}
+
+function clearAll() {
+  ['bidang', 'keywords', 'metode'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.value = '';
+  });
+  clearPanelOutputs();
+  const titles = document.getElementById('titles-list');
+  if (titles) titles.innerHTML = '';
+  document.getElementById('workspace').classList.add('hidden');
+  document.getElementById('selectedBox').classList.add('hidden');
+  initStepButtons();
+  syncMiniTabs('titles');
+}
+
+function syncMiniTabs(name) {
+  document.querySelectorAll('[data-mini-tab]').forEach(b => {
+    b.classList.remove('btn-accent');
+    b.classList.add('btn-ghost');
+  });
+  const active = document.querySelector(`[data-mini-tab="${name}"]`);
+  if (active) {
+    active.classList.remove('btn-ghost');
+    active.classList.add('btn-accent');
+  }
+}
+
+function openPanel(name, btn) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.hidden-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  syncMiniTabs(name);
+}
+
+function initStepButtons() {
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.toggle('active', i === 0);
+    s.classList.remove('done');
+  });
+}
+initStepButtons();
+
+if ('ontouchstart' in window) {
+  document.querySelectorAll('.step').forEach((s, i) =>
+    s.addEventListener('touchend', e => {
+      e.preventDefault();
+      openByName(panels[i]);
+    }, { passive: false })
+  );
+}
+
+function openByName(name) {
+  const idx = panels.indexOf(name);
+  openPanel(name, document.querySelectorAll('.step')[idx]);
+  document.getElementById('workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function badge(level) {
+  const c = level === 'Mudah' ? 'easy' : level === 'Sulit' ? 'hard' : 'medium';
+  return `<span class="badge ${c}">${level || 'Sedang'}</span>`;
+}
+
+function escapeAttr(s) {
+  return String(s).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+}
+
+async function generateTitles() {
+  const bidang = document.getElementById('bidang').value.trim();
+  const keywords = document.getElementById('keywords').value.trim();
+  if (!bidang || !keywords) return toast('Isi bidang dan kata kunci dulu.');
+  setLoad('genSpin', 'genText', true);
+  try {
+    const r = await fetch('/api/generate-titles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        bidang, keywords,
+        metode: document.getElementById('metode').value,
+        level: document.getElementById('level').value,
+      }),
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.message);
+    clearPanelOutputs();
+    document.getElementById('selectedBox').classList.add('hidden');
+    renderTitles(d.titles);
+    document.getElementById('workspace').classList.remove('hidden');
+    openByName('titles');
+  } catch (e) {
+    toast('Error: ' + e.message);
+  } finally {
+    setLoad('genSpin', 'genText', false);
+  }
+}
+
+function renderTitles(titles) {
+  document.getElementById('titles-list').innerHTML = titles.map((t, i) => `
+    <article class="card p-5">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <span class="display text-3xl font-black text-accent num">${String(i + 1).padStart(2, '0')}</span>
+        <div class="flex gap-1.5 flex-wrap justify-end">
+          ${badge(t.tingkat_kesulitan)}
+          ${t.bidang ? `<span class="badge neutral">${t.bidang}</span>` : ''}
+        </div>
+      </div>
+      <h3 class="display text-xl sm:text-2xl font-bold leading-snug mb-3">${t.judul}</h3>
+      <p class="text-xs muted mb-2 smallcaps"><b>Metode</b> · ${t.metode || '-'}</p>
+      <p class="text-sm leading-relaxed mb-4">${t.alasan || ''}</p>
+      <button class="btn btn-primary py-2 text-xs w-full" onclick="useTitle('${escapeAttr(t.judul)}')">
+        Pilih & lanjut analisis →
+      </button>
+    </article>
+  `).join('');
+}
+
+function useTitle(judul) {
+  ['researchQuery', 'methQuery', 'outlineQuery'].forEach(id => {
+    document.getElementById(id).value = judul;
+  });
+  document.getElementById('selectedTitle').textContent = judul;
+  document.getElementById('selectedBox').classList.remove('hidden');
+  // mark step 01 as done
+  document.querySelectorAll('.step')[0].classList.add('done');
+  toast('Judul dipilih. Tombol analisis sudah muncul di atas.');
+  document.getElementById('selectedBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function checkResearch() {
+  const q = document.getElementById('researchQuery').value.trim();
+  if (!q) return toast('Pilih/isi judul dulu.');
+  setLoad('resSpin', 'resText', true);
+  try {
+    const r = await fetch('/api/check-research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ judul: q }),
+    });
+    const d = await r.json();
+    currentResearchPapers = d.papers || [];
+    currentResearchSource = d.source || '';
+    currentResearchWarning = d.warning || '';
+    renderResearch(currentResearchPapers, currentResearchSource, currentResearchWarning);
+  } catch (e) {
+    toast('Error: ' + e.message);
+  } finally {
+    setLoad('resSpin', 'resText', false);
+  }
+}
+
+function getSortedResearch(p) {
+  const mode = (document.getElementById('researchSort') || {}).value || 'newest';
+  const arr = [...p];
+  if (mode === 'newest') arr.sort((a, b) => (Number(b.year) || 0) - (Number(a.year) || 0));
+  if (mode === 'oldest') arr.sort((a, b) => (Number(a.year) || 9999) - (Number(b.year) || 9999));
+  return arr;
+}
+
+function sortCurrentResearch() {
+  if (currentResearchPapers.length) renderResearch(currentResearchPapers, currentResearchSource, currentResearchWarning);
+}
+
+function renderResearch(p, source, warning) {
+  const sorted = getSortedResearch(p);
+  const mode = (document.getElementById('researchSort') || {}).value || 'newest';
+  const sortLabel = mode === 'newest' ? 'tahun terbaru' : mode === 'oldest' ? 'tahun terlama' : 'relevansi';
+  const warn = warning ? `<div class="card p-3 text-sm" style="background:#FEF3C7;border-color:#B45309">${warning}</div>` : '';
+  const src = source ? `<p class="text-xs muted smallcaps">Sumber: <b>${source}</b> · Diurutkan berdasarkan <b>${sortLabel}</b></p>` : '';
+  const list = sorted.length
+    ? sorted.map(x => `
+        <article class="card p-5">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <h4 class="display text-lg font-bold leading-snug">${x.title || '-'}</h4>
+            <div class="flex gap-1.5 flex-wrap justify-end shrink-0">
+              ${x.year ? `<span class="badge neutral num">${x.year}</span>` : ''}
+              ${x.source ? `<span class="badge">${x.source}</span>` : ''}
+            </div>
+          </div>
+          <p class="text-xs muted mb-3 smallcaps">
+            ${(x.authors || []).map(a => a.name).join(', ') || 'Unknown'} · ${x.year || '-'}
+          </p>
+          <p class="text-sm leading-relaxed mb-3">${x.abstract || 'Tidak ada abstrak.'}</p>
+          ${x.url ? `<a class="text-sm font-bold underline" target="_blank" rel="noopener" href="${x.url}">Lihat paper →</a>` : ''}
+        </article>`).join('')
+    : `<div class="card p-7 text-center">
+        <p class="display text-xl font-bold mb-1">Tidak ditemukan penelitian serupa</p>
+        <p class="text-sm muted">Tidak ada hasil dari database paper yang dipakai. Bukan berarti pasti belum pernah diteliti, ya.</p>
+      </div>`;
+  document.getElementById('research-results').innerHTML = warn + (src ? `<div class="mb-3">${src}</div>` : '') + list;
+}
+
+async function suggestMethodology() {
+  const q = document.getElementById('methQuery').value.trim();
+  if (!q) return toast('Pilih/isi judul dulu.');
+  setLoad('methSpin', 'methText', true);
+  try {
+    const r = await fetch('/api/suggest-methodology', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ judul: q }),
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.message);
+    renderMethodology(d.methodology);
+  } catch (e) {
+    toast('Error: ' + e.message);
+  } finally {
+    setLoad('methSpin', 'methText', false);
+  }
+}
+
+function renderMethodology(m) {
+  document.getElementById('methodology-results').innerHTML = `
+    <div class="grid md:grid-cols-3 gap-0 rule-thin mb-4">
+      <div class="p-4 border-r border-ink"><p class="label">Jenis</p><p class="display text-lg font-bold">${m.jenis_penelitian}</p></div>
+      <div class="p-4 border-r border-ink"><p class="label">Metode utama</p><p class="display text-lg font-bold">${m.metodologi_utama}</p></div>
+      <div class="p-4"><p class="label">Estimasi</p><p class="display text-lg font-bold">${m.estimasi_waktu}</p></div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-5">
+        <p class="label mb-3">Langkah penelitian</p>
+        <ol class="space-y-3">
+          ${(m.langkah_penelitian || []).map((x, i) => `
+            <li class="flex gap-3 items-start text-sm leading-relaxed">
+              <span class="num-bullet">${i + 1}</span><span>${x}</span>
+            </li>`).join('')}
+        </ol>
+      </div>
+      <div class="space-y-4">
+        <div class="card p-5">
+          <p class="label mb-3">Tools & teknologi</p>
+          <div class="flex gap-2 flex-wrap">
+            ${(m.tools_teknologi || []).map(x => `<span class="badge neutral">${x}</span>`).join('')}
+          </div>
+        </div>
+        <div class="card p-5">
+          <p class="label mb-2">Dataset</p>
+          <p class="text-sm leading-relaxed">${m.dataset_saran || '-'}</p>
+        </div>
+        <div class="card p-5">
+          <p class="label mb-2">Tips</p>
+          <p class="text-sm leading-relaxed italic">${m.tips || ''}</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function generateOutline() {
+  const q = document.getElementById('outlineQuery').value.trim();
+  if (!q) return toast('Pilih/isi judul dulu.');
+  setLoad('outSpin', 'outText', true);
+  try {
+    const r = await fetch('/api/generate-outline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ judul: q }),
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.message);
+    currentOutline = d.outline;
+    currentOutlineTitle = q;
+    renderOutline(d.outline, q);
+  } catch (e) {
+    toast('Error: ' + e.message);
+  } finally {
+    setLoad('outSpin', 'outText', false);
+  }
+}
+
+function listOl(a) {
+  return `<ol class="space-y-3 mt-3">
+    ${(a || []).map((x, i) => `
+      <li class="flex gap-3 items-start text-sm leading-relaxed">
+        <span class="num-bullet">${i + 1}</span><span>${x}</span>
+      </li>`).join('')}
+  </ol>`;
+}
+
+function section(t, c) {
+  return `<section class="rule-thin-bot py-5">
+    <h4 class="display text-xl font-bold smallcaps">${t}</h4>
+    ${c}
+  </section>`;
+}
+
+function renderOutline(o, judul) {
+  document.getElementById('outline-results').innerHTML = `
+    <article class="card p-6 sm:p-8">
+      <p class="label mb-1">BAB I — Pendahuluan</p>
+      <h3 class="display text-2xl sm:text-3xl font-bold mb-5 italic leading-snug">${judul}</h3>
+      <div class="panel p-4 mb-6 flex items-center justify-between gap-4 mobile-stack" style="background:#F1EEE6">
+        <div>
+          <p class="display text-base font-bold">Download outline BAB I</p>
+          <p class="muted text-xs">Times New Roman 12 · margin standar · spacing 1.5 · siap edit di Word.</p>
+        </div>
+        <button class="btn btn-accent" onclick="downloadOutlineDocx()">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          .docx
+        </button>
+      </div>
+      ${section('1.1 Latar Belakang', `<p class="text-sm leading-relaxed mt-2">${o.latar_belakang}</p>`)}
+      ${section('1.2 Rumusan Masalah', listOl(o.rumusan_masalah))}
+      ${section('1.3 Tujuan Penelitian', listOl(o.tujuan_penelitian))}
+      ${section('1.4 Manfaat Penelitian', `
+        <div class="grid sm:grid-cols-2 gap-3 mt-3">
+          <div class="border-l-2 border-accent pl-3">
+            <p class="text-xs smallcaps muted mb-1">Teoritis</p>
+            <p class="text-sm leading-relaxed">${o.manfaat_penelitian?.teoritis || '-'}</p>
+          </div>
+          <div class="border-l-2 border-accent pl-3">
+            <p class="text-xs smallcaps muted mb-1">Praktis</p>
+            <p class="text-sm leading-relaxed">${o.manfaat_penelitian?.praktis || '-'}</p>
+          </div>
+        </div>
+      `)}
+      ${section('1.5 Batasan Masalah', listOl(o.batasan_masalah))}
+      ${section('1.6 Sistematika Penulisan', listOl(o.sistematika_penulisan))}
+    </article>
+  `;
+}
+
+async function downloadOutlineDocx() {
+  if (!currentOutline || !currentOutlineTitle) return toast('Generate outline dulu sebelum download.');
+  try {
+    const r = await fetch('/api/download-outline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ judul: currentOutlineTitle, outline: currentOutline }),
+    });
+    if (!r.ok) throw new Error('Gagal membuat file DOCX');
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'bab-1-outline.docx';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('File DOCX berhasil dibuat.');
+  } catch (e) {
+    toast('Error: ' + e.message);
+  }
+}
 </script>
 </body>
 </html>

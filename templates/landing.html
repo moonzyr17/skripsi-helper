@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skripsi Helper — Asisten AI buat lulus tepat waktu</title>
+<meta name="description" content="Generate 10 ide judul skripsi, cek riset terdahulu, dapat saran metodologi, dan unduh outline BAB I dalam format DOCX. Gratis, untuk semua jurusan.">
+<meta name="theme-color" content="#FAFAF7">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper: '#FAFAF7',
+          paper2: '#F1EEE6',
+          ink: '#1B1B1B',
+          ink2: '#3D3A36',
+          muted: '#6B665F',
+          rule: '#1B1B1B',
+          accent: '#C2410C',     /* terracotta */
+          accent2: '#7C3F1A',
+          mark: '#FDE68A',       /* highlighter */
+          ok: '#15803D',
+        },
+        fontFamily: {
+          serif: ['"Crimson Pro"', 'ui-serif', 'Georgia'],
+          sans: ['"Atkinson Hyperlegible"', 'ui-sans-serif', 'system-ui'],
+          mono: ['"JetBrains Mono"', 'ui-monospace'],
+          display: ['"Crimson Pro"', 'ui-serif'],
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { background: #FAFAF7; color: #1B1B1B; font-family: 'Atkinson Hyperlegible', system-ui; }
+  .display { font-family: 'Crimson Pro', ui-serif; letter-spacing: -0.01em; }
+  .num { font-feature-settings: "tnum" 1; font-variant-numeric: tabular-nums; }
+  .rule-top { border-top: 2px solid #1B1B1B; }
+  .rule-bot { border-bottom: 2px solid #1B1B1B; }
+  .rule-thin-bot { border-bottom: 1px solid #1B1B1B; }
+  .dropcap::first-letter {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 900;
+    font-size: 4.4em;
+    line-height: 0.8;
+    float: left;
+    margin: 0.06em 0.10em 0 -0.02em;
+    color: #C2410C;
+  }
+  .smallcaps { font-variant: small-caps; letter-spacing: 0.08em; }
+  .pull-quote {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+  }
+  .col-rule { column-rule: 1px solid #D6D2C9; }
+  .underline-cta {
+    background-image: linear-gradient(#C2410C, #C2410C);
+    background-size: 100% 2px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    padding-bottom: 2px;
+  }
+  .btn-primary {
+    background: #1B1B1B; color: #FAFAF7;
+    transition: background 150ms, transform 100ms;
+    border: 2px solid #1B1B1B;
+  }
+  .btn-primary:hover { background: #C2410C; border-color: #C2410C; }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-ghost { color: #1B1B1B; border: 2px solid #1B1B1B; transition: all 150ms; background: transparent; }
+  .btn-ghost:hover { background: #1B1B1B; color: #FAFAF7; }
+  .marker { background: linear-gradient(180deg, transparent 60%, #FDE68A 60%); padding: 0 2px; }
+  .badge {
+    border: 1.5px solid #1B1B1B; border-radius: 999px;
+    padding: 2px 10px; font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; font-weight: 700;
+  }
+  .card {
+    border: 1.5px solid #1B1B1B;
+    background: #FAFAF7;
+    transition: transform 150ms, box-shadow 150ms;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 6px 6px 0 #1B1B1B; }
+  :focus-visible { outline: 2px solid #C2410C; outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .btn-primary, .btn-ghost { transition: none; }
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- MASTHEAD -->
+<header class="rule-bot">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-ink text-paper rounded-sm flex items-center justify-center display text-xl font-black">S</div>
+      <div>
+        <p class="display text-base font-bold leading-none">Skripsi Helper</p>
+        <p class="text-[10px] muted smallcaps">Vol. 1 · Edisi Mahasiswa</p>
+      </div>
+    </a>
+    <nav class="flex items-center gap-1.5 sm:gap-3 text-sm">
+      <a href="#how" class="hidden sm:inline text-muted hover:text-ink transition">Cara pakai</a>
+      <a href="#sample" class="hidden sm:inline text-muted hover:text-ink transition">Contoh</a>
+      <a href="#faq" class="hidden sm:inline text-muted hover:text-ink transition">FAQ</a>
+      <a href="/app" class="btn-primary px-4 py-2 text-sm font-bold">Mulai →</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="rule-bot">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-10 sm:py-16">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="badge bg-ink text-paper">Gratis · No login</span>
+      <span class="text-xs muted smallcaps hidden sm:inline">Senin · 18 Mei 2026</span>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-6 sm:gap-8 items-end">
+      <h1 class="display lg:col-span-9 font-black leading-[0.92] text-[clamp(2.8rem,7.5vw,6.5rem)]">
+        Bingung mau<br>
+        skripsi<br>
+        <span class="italic">tentang apa?</span>
+      </h1>
+      <div class="lg:col-span-3 lg:border-l border-ink lg:pl-6">
+        <p class="text-xs smallcaps muted mb-3">Bantuan cepat untuk:</p>
+        <ul class="text-sm space-y-1.5">
+          <li class="flex items-baseline gap-2"><span class="text-accent font-bold">→</span> Cari ide judul</li>
+          <li class="flex items-baseline gap-2"><span class="text-accent font-bold">→</span> Cek riset terdahulu</li>
+          <li class="flex items-baseline gap-2"><span class="text-accent font-bold">→</span> Saran metodologi</li>
+          <li class="flex items-baseline gap-2"><span class="text-accent font-bold">→</span> Outline BAB I (DOCX)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-6 sm:gap-8 mt-8 sm:mt-10">
+      <div class="lg:col-span-7 lg:col-start-1">
+        <p class="text-lg sm:text-xl leading-relaxed">
+          Asisten AI yang ngebantu lo dari <span class="marker font-bold">brainstorm judul</span> sampai <span class="marker font-bold">draft BAB I</span>. Gak peduli jurusan apa — teknik, hukum, kesehatan, sosial, ekonomi — tinggal kasih topik, AI yang bantu sisanya.
+        </p>
+        <div class="flex flex-wrap gap-3 mt-7">
+          <a href="/app" class="btn-primary px-6 py-3 font-bold inline-flex items-center gap-2">
+            Mulai gratis sekarang
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#sample" class="btn-ghost px-6 py-3 font-bold">Lihat contoh output</a>
+        </div>
+        <p class="text-xs muted mt-4 font-mono">Tanpa login · Tanpa kartu kredit · Tanpa watermark</p>
+      </div>
+
+      <!-- Stats column -->
+      <aside class="lg:col-span-5 grid grid-cols-3 gap-0 rule-top rule-bot">
+        <div class="p-4 sm:p-5 border-r border-ink">
+          <p class="display text-3xl sm:text-5xl font-black text-accent num">10</p>
+          <p class="text-xs smallcaps muted mt-1">Judul / klik</p>
+        </div>
+        <div class="p-4 sm:p-5 border-r border-ink">
+          <p class="display text-3xl sm:text-5xl font-black num">5+</p>
+          <p class="text-xs smallcaps muted mt-1">Paper riset</p>
+        </div>
+        <div class="p-4 sm:p-5">
+          <p class="display text-3xl sm:text-5xl font-black num">DOCX</p>
+          <p class="text-xs smallcaps muted mt-1">Outline siap</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- PULL QUOTE / EDITORIAL -->
+<section class="rule-bot">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="grid lg:grid-cols-12 gap-6 sm:gap-8">
+      <div class="lg:col-span-3">
+        <p class="badge inline-block">Editorial</p>
+        <p class="display text-xl mt-3 italic">Kenapa tools ini ada</p>
+      </div>
+      <div class="lg:col-span-9">
+        <p class="pull-quote text-ink2">
+          “Mahasiswa stuck bukan karena males<span class="text-accent"> — </span>tapi karena gak tau dari mana mulai. Tools ini geser titik mulainya: dari kosong, jadi ada draft.”
+        </p>
+        <p class="text-sm mt-4 smallcaps muted">— Tim Skripsi Helper</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 FEATURE CARDS -->
+<section class="rule-bot" id="features">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="flex items-end justify-between gap-4 mb-8">
+      <div>
+        <p class="badge inline-block">Fitur</p>
+        <h2 class="display text-3xl sm:text-5xl font-black mt-3 leading-tight">Empat tools, satu workflow.</h2>
+      </div>
+      <p class="hidden sm:block muted text-sm max-w-xs">Semua dalam satu halaman. Lo bisa lompat dari satu fitur ke fitur lain tanpa kehilangan progress.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-0 rule-top rule-bot">
+      <article class="p-5 sm:p-6 border-r-0 sm:border-r border-ink">
+        <p class="display text-5xl font-black text-accent num mb-3">01</p>
+        <h3 class="display text-xl font-bold mb-2">Generate Judul</h3>
+        <p class="text-sm leading-relaxed">10 ide judul berdasarkan bidang, kata kunci, dan metode pilihan lo. Lengkap dengan tingkat kesulitan dan alasan kenapa judul itu menarik.</p>
+      </article>
+      <article class="p-5 sm:p-6 border-t sm:border-t-0 border-r-0 sm:border-r border-ink">
+        <p class="display text-5xl font-black text-accent num mb-3">02</p>
+        <h3 class="display text-xl font-bold mb-2">Cek Riset Terdahulu</h3>
+        <p class="text-sm leading-relaxed">Cari paper relevan via Semantic Scholar (fallback Crossref). Hindari topik yang udah jenuh atau ketauan duplikat.</p>
+      </article>
+      <article class="p-5 sm:p-6 border-t lg:border-t-0 border-r-0 lg:border-r border-ink">
+        <p class="display text-5xl font-black text-accent num mb-3">03</p>
+        <h3 class="display text-xl font-bold mb-2">Saran Metodologi</h3>
+        <p class="text-sm leading-relaxed">Rekomendasi metode, langkah penelitian, tools, dataset, estimasi waktu, dan referensi metode untuk judul yang lo pilih.</p>
+      </article>
+      <article class="p-5 sm:p-6 border-t lg:border-t-0 border-ink">
+        <p class="display text-5xl font-black text-accent num mb-3">04</p>
+        <h3 class="display text-xl font-bold mb-2">Outline BAB I</h3>
+        <p class="text-sm leading-relaxed">Latar belakang, rumusan masalah, tujuan, manfaat, batasan, sistematika. Unduh DOCX siap edit di Word.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="rule-bot" id="how">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="grid lg:grid-cols-12 gap-6 sm:gap-8">
+      <div class="lg:col-span-4">
+        <p class="badge inline-block">How it works</p>
+        <h2 class="display text-3xl sm:text-5xl font-black mt-3 leading-tight">Empat langkah sederhana.</h2>
+        <p class="text-sm muted mt-4">Total waktu: sekitar 5–10 menit. Outputnya bisa langsung lo bawa ke dosen pembimbing buat diskusi.</p>
+      </div>
+      <ol class="lg:col-span-8 col-rule sm:columns-2 sm:gap-8 lg:gap-10 text-base">
+        <li class="break-inside-avoid mb-7">
+          <p class="text-xs smallcaps text-accent">Step 01</p>
+          <h3 class="display text-2xl font-bold mt-1 mb-2">Input topik & kata kunci</h3>
+          <p class="leading-relaxed">Pilih bidang ilmu (bebas, semua jurusan), tulis 2–4 kata kunci, optional metode yang lo udah penasaran.</p>
+        </li>
+        <li class="break-inside-avoid mb-7">
+          <p class="text-xs smallcaps text-accent">Step 02</p>
+          <h3 class="display text-2xl font-bold mt-1 mb-2">Pilih judul yang menarik</h3>
+          <p class="leading-relaxed">AI kasih 10 opsi. Klik judul yang paling lo suka — ini jadi context buat fitur berikutnya.</p>
+        </li>
+        <li class="break-inside-avoid mb-7">
+          <p class="text-xs smallcaps text-accent">Step 03</p>
+          <h3 class="display text-2xl font-bold mt-1 mb-2">Cek & validasi</h3>
+          <p class="leading-relaxed">Lihat paper terdahulu di topik itu. Pastikan masih ada celah riset yang bisa lo ambil sebagai novelty.</p>
+        </li>
+        <li class="break-inside-avoid mb-7">
+          <p class="text-xs smallcaps text-accent">Step 04</p>
+          <h3 class="display text-2xl font-bold mt-1 mb-2">Generate metodologi & BAB I</h3>
+          <p class="leading-relaxed">Klik tombol → langsung dapat saran metode + outline pendahuluan. Download DOCX-nya. Done.</p>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE OUTPUT -->
+<section class="rule-bot" id="sample">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="flex items-end justify-between gap-4 mb-6">
+      <div>
+        <p class="badge inline-block">Contoh output</p>
+        <h2 class="display text-3xl sm:text-5xl font-black mt-3 leading-tight">Begini bentuknya.</h2>
+      </div>
+      <a href="/app" class="hidden sm:inline-flex text-sm font-bold underline-cta text-ink">Coba sendiri →</a>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-0 rule-top rule-bot">
+      <!-- Sample 1: Judul -->
+      <article class="p-5 sm:p-7 border-b lg:border-b-0 lg:border-r border-ink">
+        <p class="text-xs smallcaps muted">Sample · Generate Judul</p>
+        <h3 class="display text-xl font-bold mt-2 mb-4 italic">"Topik: ekonomi digital, kata kunci: UMKM, fintech"</h3>
+
+        <ol class="space-y-4 text-sm">
+          <li class="rule-thin-bot pb-3">
+            <p class="font-bold display text-base">Pengaruh Adopsi Fintech Lending terhadap Pertumbuhan UMKM Sektor Kuliner di Bandung</p>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span class="text-xs px-2 py-0.5 border border-ink rounded-full font-bold">Sedang</span>
+              <span class="text-xs muted">Kuantitatif · Survey</span>
+            </div>
+          </li>
+          <li class="rule-thin-bot pb-3">
+            <p class="font-bold display text-base">Analisis Faktor Adopsi QRIS oleh Pedagang Pasar Tradisional dengan Pendekatan TAM</p>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span class="text-xs px-2 py-0.5 border border-ink rounded-full font-bold">Sedang</span>
+              <span class="text-xs muted">Mixed-method</span>
+            </div>
+          </li>
+          <li>
+            <p class="font-bold display text-base">Strategi Digital Marketing UMKM Berbasis TikTok: Studi Kasus Brand Lokal Indonesia</p>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span class="text-xs px-2 py-0.5 border border-ink rounded-full font-bold">Mudah</span>
+              <span class="text-xs muted">Studi kasus</span>
+            </div>
+          </li>
+        </ol>
+        <p class="text-xs muted mt-4 italic">+ 7 judul lainnya dengan alasan & metode masing-masing.</p>
+      </article>
+
+      <!-- Sample 2: Outline -->
+      <article class="p-5 sm:p-7">
+        <p class="text-xs smallcaps muted">Sample · Outline BAB I</p>
+        <h3 class="display text-xl font-bold mt-2 mb-4">"Pengaruh Adopsi Fintech Lending terhadap UMKM…"</h3>
+
+        <div class="text-sm space-y-3 dropcap leading-relaxed">
+          <p><strong>1.1 Latar Belakang.</strong> Pertumbuhan UMKM di Indonesia tidak terlepas dari akses pembiayaan yang terbatas dari perbankan konvensional. Hadirnya fintech lending menawarkan alternatif pembiayaan yang lebih cepat dan inklusif…</p>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-xs">
+          <div class="border-l-2 border-accent pl-2">
+            <p class="font-bold smallcaps">1.2 Rumusan Masalah</p>
+            <p class="muted mt-1">3 pertanyaan riset</p>
+          </div>
+          <div class="border-l-2 border-accent pl-2">
+            <p class="font-bold smallcaps">1.3 Tujuan</p>
+            <p class="muted mt-1">3 tujuan utama</p>
+          </div>
+          <div class="border-l-2 border-accent pl-2">
+            <p class="font-bold smallcaps">1.4 Manfaat</p>
+            <p class="muted mt-1">Teoritis & praktis</p>
+          </div>
+          <div class="border-l-2 border-accent pl-2">
+            <p class="font-bold smallcaps">1.5 Batasan</p>
+            <p class="muted mt-1">Scope penelitian</p>
+          </div>
+        </div>
+
+        <div class="mt-5 inline-flex items-center gap-2 text-sm font-bold border-2 border-ink px-4 py-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6"/></svg>
+          bab-1-pengaruh-adopsi-fintech.docx
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="rule-bot" id="faq">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="grid lg:grid-cols-12 gap-6 sm:gap-8">
+      <div class="lg:col-span-4">
+        <p class="badge inline-block">FAQ</p>
+        <h2 class="display text-3xl sm:text-5xl font-black mt-3 leading-tight">Pertanyaan yang sering muncul.</h2>
+      </div>
+      <dl class="lg:col-span-8 space-y-0 rule-top rule-bot">
+        <div class="rule-thin-bot py-5 grid sm:grid-cols-3 gap-3">
+          <dt class="display text-lg font-bold">Apakah benar gratis?</dt>
+          <dd class="sm:col-span-2 text-sm leading-relaxed">Ya, sepenuhnya gratis. AI dijalankan via Groq API yang punya tier gratis, dan pencarian paper pakai endpoint publik Semantic Scholar / Crossref. Tidak ada watermark, tidak ada limit harian per user.</dd>
+        </div>
+        <div class="rule-thin-bot py-5 grid sm:grid-cols-3 gap-3">
+          <dt class="display text-lg font-bold">Bisa dipakai semua jurusan?</dt>
+          <dd class="sm:col-span-2 text-sm leading-relaxed">Bisa. Tools ini diuji untuk jurusan teknik, hukum, kesehatan, ekonomi, sosial, dan humaniora. AI ngikutin bidang yang lo input.</dd>
+        </div>
+        <div class="rule-thin-bot py-5 grid sm:grid-cols-3 gap-3">
+          <dt class="display text-lg font-bold">Output AI bisa langsung dipakai?</dt>
+          <dd class="sm:col-span-2 text-sm leading-relaxed">Output adalah <strong>draft / starting point</strong> — bukan skripsi jadi. Lo tetap perlu review, edit, dan diskusi sama dosen pembimbing. Anggap aja ini sparring partner brainstorming yang nggak pernah capek.</dd>
+        </div>
+        <div class="py-5 grid sm:grid-cols-3 gap-3">
+          <dt class="display text-lg font-bold">Datanya disimpan?</dt>
+          <dd class="sm:col-span-2 text-sm leading-relaxed">Tidak. Semua input lo cuma diteruskan ke API AI saat itu juga, lalu dilupakan. Tidak ada database user, tidak ada akun, tidak ada cookie tracking.</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="rule-bot bg-paper2">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+    <p class="text-xs smallcaps muted mb-4">Saatnya mulai</p>
+    <h2 class="display text-4xl sm:text-7xl font-black leading-[0.95] mb-6">
+      Skripsi gak harus<br><span class="italic text-accent">nyiksa.</span>
+    </h2>
+    <p class="text-base sm:text-lg muted max-w-xl mx-auto mb-8">
+      Mulai dari brainstorm judul. Lima menit dari sekarang, lo udah punya 10 ide siap diskusi.
+    </p>
+    <a href="/app" class="btn-primary inline-flex items-center gap-2 px-7 py-4 text-base font-bold">
+      Mulai gratis sekarang
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-7 flex flex-wrap items-center justify-between gap-3 text-xs muted">
+    <p class="smallcaps">© 2026 Skripsi Helper · Educational tool · Not a substitute for advisor feedback</p>
+    <div class="flex items-center gap-4">
+      <a href="https://github.com/moonzyr17/skripsi-helper" target="_blank" rel="noopener" class="hover:text-ink transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.04c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.69 1.25 3.34.96.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18.91-.25 1.89-.38 2.86-.38.97 0 1.95.13 2.86.38 2.18-1.49 3.14-1.18 3.14-1.18.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.25 5.65.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.55C20.21 21.39 23.5 17.07 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        Source
+      </a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
